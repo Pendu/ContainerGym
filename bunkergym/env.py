@@ -11,9 +11,9 @@ import matplotlib.pyplot as plt
 
 
 # TODO: Asserts, input validation
-class SutcoEnv(gym.Env):
+class ContainerEnv(gym.Env):
     """
-    Simplified Sutco environment for OpenAI Gym.
+    Simplified ContainerEnv environment for OpenAI Gym.
 
     Attributes
     ----------
@@ -161,6 +161,14 @@ class SutcoEnv(gym.Env):
 
     @classmethod
     def from_json(cls, filepath):
+        """
+        The from_json function is a class method that takes in the filepath to a JSON
+        file and returns an instance of the ContainerEnv class.
+
+        :param cls: Pass the class of the object that is being created
+        :param filepath: Specify the filepath of the json file to be read
+        :return: An object of the class 'ContainerEnv'
+        """
         with open(filepath, "r") as f:
             data = json.load(f)
             obj = cls(
@@ -186,6 +194,13 @@ class SutcoEnv(gym.Env):
             return obj
 
     def step(self, action):
+        """Perform a single step in the environment.
+        :param action: The action to be performed
+        :type action: int
+        :return: The observation, reward, done, and info
+        :rtype: tuple
+        """
+
         press_is_free = False  # Used to calculate reward at the end of the step
         emptied_volume = (
             0  # Current volume of the bunker that should be emptied, also for reward
@@ -275,6 +290,11 @@ class SutcoEnv(gym.Env):
         return self.state.to_dict()
 
     def render(self, y_volumes=None):
+        # Plotting live volumes of bunkers during evaluation
+        """
+        :param y_volumes: input volumes
+        :return: None
+        """
         for i in range(self.n_bunkers):
             y_values = np.array(y_volumes)[:, i]
             x_values = np.arange(len(y_volumes))
@@ -292,6 +312,10 @@ class SutcoEnv(gym.Env):
 
 class State:
     def __init__(self, enabled_bunkers, n_presses):
+        """"
+        :param enabled_bunkers: list of enabled bunkers
+        :param n_presses: number of presses
+        """
         self.episode_length = 0
         if type(enabled_bunkers) == list:
             self.volumes = np.zeros(len(enabled_bunkers))
@@ -302,44 +326,20 @@ class State:
         self.press_times = np.zeros(n_presses)
 
     def reset(self, min_volumes, max_volumes):
+        # Reset volumes to random values between min_volumes and max_volumes
+        """"
+        :param min_volumes: minimum volume of each bunker
+        :param max_volumes: maximum volume of each bunker
+        """
         self.volumes = np.random.uniform(
             min_volumes, max_volumes, size=len(self.volumes)
         )
 
     def to_dict(self):
+
+        """
+        The to_dict function is used to convert the class into a dictionary. This is necessary for the gym environment to work.
+        :param self: Refer to the object itself
+        :return: A dictionary with the volumes and press times
+        """
         return {"Volumes": self.volumes, "Time presses will be free": self.press_times}
-
-
-if __name__ == "__main__":
-    print(
-        "Running env.py on its own is only meant for testing purposes. Please create an instance of the environment class and use it in your own code."
-    )
-    # Testing examples of the pre-configured environments with randomly chosen actions
-    # TODO: Remove
-
-    ### Full Sutco Setup
-    # env = SutcoEnv.from_json("./configs/all_sutco_constants.json")
-    # for n in range(100):
-    #     print(env.step(np.random.choice(a=17, p=[0.84, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01])))
-
-    ### One Bunker One Press
-    # env = SutcoEnv.from_json("./configs/1bunker_1press.json")
-    # env = FlattenObservation(env)
-
-    # for n in range(100):
-    #     print(env.step(action=np.random.choice(2, p=[0.98, 0.02])))
-
-    ### Five Bunkers Two Presses
-    # env = SutcoEnv.from_json("./configs/5bunkers_2presses.json")
-    # for n in range(100):
-    #     print(env.step(action=np.random.choice(11, p=[0.90, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01])))
-
-    ### Alternative format with anonymous bunkers
-    env = SutcoEnv.from_json("configs/list_constants_example.json")
-    env = FlattenObservation(env)
-    for n in range(100):
-        print(
-            env.step(
-                action=np.random.choice(7, p=[0.94, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01])
-            )
-        )

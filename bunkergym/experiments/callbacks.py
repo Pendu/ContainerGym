@@ -25,11 +25,15 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
         self.best_mean_reward = -np.inf
 
     def _init_callback(self) -> None:
+        """This method is called before the first rollout starts."""
         # Create folder if needed
         if self.save_path is not None:
             os.makedirs(self.save_path, exist_ok=True)
 
     def _on_step(self) -> bool:
+        """"
+        This method will be called by the model after each call to `env.step()`.
+        """
         if self.n_calls % self.check_freq == 0:
             # Retrieve training reward
             x, y = ts2xy(load_results(self.log_dir), "timesteps")
@@ -70,6 +74,9 @@ class ProgressBarCallback(BaseCallback):
 
 # This callback uses the 'with' block, allowing for correct initialisation and destruction
 class ProgressBarManager(object):
+    """"
+    :param total_timesteps: (int) Total number of timesteps
+    """
     def __init__(self, total_timesteps):  # init object with total timesteps
         self.pbar = None
         self.total_timesteps = total_timesteps
@@ -85,59 +92,4 @@ class ProgressBarManager(object):
         self.pbar.close()
 
 
-'''
-# ENV LOGGER CURRENTLY UNTESTED
-class EnvLogger(BaseCallback):
-    """
-    Callback for logging episodes of the SutcoEnv during training.
 
-    :param log_frequency: (int) How many episodes to wait before logging an episode. (1 -> log every episode, 5 -> log every 5th episode)
-    """
-    def __init__(self, log_frequency, log_dir):
-        super(EnvLogger, self).__init__()
-        self.log_frequency = log_frequency
-        self.log_dir = log_dir
-        # create dir if not exists
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir)
-        self.episode_num = 1
-    
-    def _init_callback(self) -> None:
-        bunkers_raw = self.model.env.get_attr("bunker_ids")
-        self.bunkers = [x for x, y in bunkers_raw[0]]
-        # Create output frame
-        self.df = pd.DataFrame(columns=['action', 'reward'] + self.bunkers)
-
-    def _on_step(self):
-        if self.episode_num % self.log_frequency == 0:
-            # Check done
-            if self.locals['dones'][0]:
-                self.save_csv()   
-                self.episode_num += 1
-                return # Stablebaselines calls reset() before the callback, so this step has invalid values
-
-            # Write action and reward
-            row_dict = dict()
-            row_dict['action'] = self.locals['actions'][0]
-            row_dict['reward'] = self.locals['rewards'][0]
-
-            # Write volumes
-            obs = self.locals['new_obs']
-            volumes = obs['Volumes'][0]
-            for i, bunker in enumerate(self.bunkers):
-                row_dict[bunker] = volumes[i]
-            self.df = self.df.append(row_dict, ignore_index=True)
-
-        # Count episodes
-        done = self.locals['dones'][0]
-        if self.locals['dones'][0]:
-            self.episode_num += 1
-        return
-    
-    def save_csv(self):
-        # Save to file
-        self.df.to_csv(self.log_dir + f"episode_{self.episode_num}.csv", index=False)
-        # Reset logged data
-        self.df = self.df[0:0]
-        return
-'''

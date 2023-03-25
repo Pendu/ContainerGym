@@ -13,7 +13,7 @@ import torch
 from stable_baselines3 import PPO, DQN, A2C
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common import results_plotter
-from bunkergym.env import SutcoEnv
+from bunkergym.env import ContainerEnv
 from gym.wrappers import FlattenObservation
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -21,6 +21,12 @@ torch.set_num_threads(1)
 
 
 def parse_args():
+
+    """
+    The parse_args function is used to parse the command line arguments.
+
+    :return: A namespace object that contains the arguments passed to the script
+    """
     parser = argparse.ArgumentParser()
 
     # Experiment specific arguments
@@ -75,15 +81,13 @@ def parse_args():
 
 def inference(seed, args):
     """
-    Evaluates a trained agent and creates plots of its performance.
+    The inference function is used to evaluate a trained agent and create plots of its performance.
 
-    Attributes
-    ----------
-    seed : int
-        Seed used for the experiment
-    args : argparse.Namespace
-        Arguments passed to the script
+    :param seed: Set the seed for the random number generator
+    :param args: Pass arguments to the script
+    :return: None
     """
+
 
     overwrite_episode_length = 1200
     deterministic_policy = True
@@ -108,7 +112,7 @@ def inference(seed, args):
     )  # Parse budget from run name
 
     results_plotter.plot_results(
-        [log_dir], budget, results_plotter.X_TIMESTEPS, f"{args.RL_agent} Sutco"
+        [log_dir], budget, results_plotter.X_TIMESTEPS, f"{args.RL_agent} ContainerEnv"
     )
 
     log_dir_results = os.path.dirname(os.path.abspath(__file__)) + "/results/"
@@ -116,7 +120,7 @@ def inference(seed, args):
 
     plt.savefig(log_dir_results + "train_reward_" + run_name + ".%s" % fig_format)
 
-    env = SutcoEnv.from_json(
+    env = ContainerEnv.from_json(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "../configs/" + config_file
         )

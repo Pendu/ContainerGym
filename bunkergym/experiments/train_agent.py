@@ -10,7 +10,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common import results_plotter
 from multiprocessing import Process
 from bunkergym.experiments.callbacks import *
-from bunkergym.env import SutcoEnv
+from bunkergym.env import ContainerEnv
 from gym.wrappers import FlattenObservation
 import argparse
 import os
@@ -20,6 +20,13 @@ torch.set_num_threads(1)
 
 
 def parse_args():
+    """
+    The parse_args function is used to parse the command line arguments.
+        It takes no arguments and returns an argparse object containing all of the
+        added arguments.
+
+    :return: A namespace object
+    """
     parser = argparse.ArgumentParser()
 
     # Experiment specific arguments
@@ -60,15 +67,15 @@ def parse_args():
 
 def train(seed, args):
     """
-    Trains an agent on the benchmark environment.
+    The train function is the main function of this script.
+    It trains an agent on the benchmark environment.
 
-    Attributes
-    ----------
-    seed : int
-        Seed used for the experiment
-    args : argparse.Namespace
-        Arguments passed to the script
+
+    :param seed: Initialize the random number generator
+    :param args: Pass arguments to the script
+    :return: None
     """
+
 
     config_file = args.config_file
     budget = args.budget
@@ -91,7 +98,7 @@ def train(seed, args):
     os.makedirs(log_dir, exist_ok=True)
 
     # Create and wrap the environment
-    env = SutcoEnv.from_json(
+    env = ContainerEnv.from_json(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "../configs/" + config_file
         )

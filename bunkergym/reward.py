@@ -77,16 +77,16 @@ class RewardEvaluator:
 
     def reward(self, action, current_volume, press_is_free, bunker_id):
         """
-
-        General reward function. Depending on bunker_id, calls corresponding Gaussian reward function.
+        The reward function is a Gaussian function. Depending on bunker_id, calls corresponding Gaussian reward function.
+        The reward is 1 if the action taken by the agent leads to an empty bunker, and min_reward otherwise.
 
         :param action: Action taken by the agent at time t
         :param current_volume: Bunker volume at time t
         :param press_is_free: True if press is free (emptying is possible) at time t. False otherwise
         :param bunker_id: ID of bunker on which the action is performed
-        :return: Reward value between min_reward and 1
+        :return: A value between min_reward and 1
         """
 
         return self.gaussian_reward_dict_params(
             action, current_volume, press_is_free, bunker_id
-        )
+)
