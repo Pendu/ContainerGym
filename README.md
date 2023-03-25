@@ -1,104 +1,97 @@
-# An RL benchmark framework based on real world system
+# A RL benchmark framework based on real world system ♻️
 
-This branch contains a version of the RL benchmark environment which will be published alongside the benchmark paper.
+[<img src="https://img.shields.io/badge/license-MIT-blue">](https://github.com/vwxyzjn/cleanrl)
+![supported python versions](https://img.shields.io/badge/python-%3C%203.10-306998)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+![dependencies status](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen)
+[<img src="https://img.shields.io/badge/%F0%9F%A4%97%20Models-Huggingface-F8D521">](https://huggingface.co/cleanrl)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15GNDAoepHN524mFIQsieBJEohRtRt82z?usp=sharing)
+## 🖊 Info
 
-# Folder Structure
-The **configs** folder contains .json files which can be used to create an environment. These files currently hold the parameters we extracted from Sutco's data, and should be modified before release!
 
-The **models** folder contains the press models for bunker emptying and random walk models for bunker filling.
+## 🏗 Folder Structure 
 
-**env.py** contains the environment, and **reward.py** contains a class that can be parameterized and be used to calculate rewards.
+```txt
+📦bunkergym
+ ┣ 📂configs -> Contains .json files  used to create an environment
+ ┣ 📂experiments
+    ┃ ┣ 📜callbacks.py -> Callbacks for training
+    ┃ ┣ 📜evaluate_agent.py -> Evaluation script
+    ┃ ┗ 📜train_agent.py -> Training script
+ ┣ 📂models/
+    ┃ ┣ 📜linear_press_models.py -> Press models for emptying containers
+    ┃ ┗ 📜random_walk_models.py -> Random walk models for filling containers
+ ┃ ┣ 📜env.py -> Environment module with the environment class
+ ┣ 📜reward.py
+ ┣ 📜project.toml
+ ┗ 📜README.md   
+```
 
-# Quick Start
- 
-To configure your environment you will need Anaconda, the Python Distribution.
+## 📚 Setup
 
-The instructions for installing Anaconda can be found [here](https://docs.anaconda.com/anaconda/install/)
+### Pre-requisites
 
-Once Anaconda is installed you should have `conda` executable in your environment path.
+* Python >=3.7.1,<3.10 (not yet 3.10)
+* [Poetry 1.2.1+](https://python-poetry.org)
 
-Anaconda provides a concept called environments which allow us to have different dependencies based on what we're working on. The documentation is available [here](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html)
+## 🤖 Usage- Method-1: Using poetry
 
-Instructions: 
+Clone the repository and run the following command from the root directory of the repository.
 
 ```{bash}
-conda env create -f environment.yml
+git clone https://github.com/Pendu/ContainerGym_Prefinal.git && cd bunkergym
+poetry install
+poetry shell
+
 ```
+Run the following commands from the root directory of the repository.
 
-
-# Link to shared folder 
-https://drive.google.com/drive/folders/1j1VAmhpyXU7DKTFTjCtpHqZcMrzNabAV?usp=sharing
-
-# Link to paperpile 
-https://paperpilegit
-zim.com/shared/QFCh51
-
-## Usage:
-
-Execute from the experiments/ folder. 
-
-### Training
+### 👑 Training
 
 ```
 
-python train_agent.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent DQN --n-seeds 9
+poetry run python3 -m bunkergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
+
+```
+### 📊 Evaluation
 
 ```
 
-```
-
-python train_agent.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent PPO --n-seeds 5
+poetry run python3 -m bunkergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
 
 ```
 
-```
+## 🤖 Usage- Method-2: Using pip
 
-python train_agent.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent TRPO --n-seeds 9
+Create a virtual environment and run the following command from the root directory of the repository.
 
-```
-```
-
-python train_agent.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent A2C --n-seeds 5
-
-```
-
-### Evaluation
+```{bash}
+python3 venv venv
+source venv/bin/activate
+pip install -i https://test.pypi.org/simple/ bunkergym==1.3.0 --extra-index-url https://pypi.org/simple
 
 ```
+Run the following commands from the root directory of the repository.
 
-python evaluate_agent.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent DQN --n-seeds 9 --inf-eplen 600
-
-```
-```
-
-python evaluate_agent.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent PPO --n-seeds 5 --inf-eplen 600
+### 👑 Training
 
 ```
 
-```
-
-python evaluate_agent.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent TRPO --n-seeds 9 --inf-eplen 600
-
-```
-```
-
-python evaluate_agent.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent A2C --n-seeds 5 --inf-eplen 600
+python3 -m bunkergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
 
 ```
 
-### Plot reward curves (training) for an Agent for each seed in different plots
+### 📊 Evaluation
 
 ```
 
-python plot_smoothened_reward.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent DQN --n-seeds 9
+python3 -m bunkergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
 
 ```
 
-### Plot reward curve (training) for an Agent for all seeds in a single plot
+## 🎭 Support and get involved
 
-```
+Feel free to ask questions. Posting in [Github Issues]( https://github.com/Pendu/ContainerGym_Prefinal/issues) and PRs are also welcome.
 
-python plot_smoothened_reward_all_seeds.py --config-file 5bunkers_2presses.json --budget 2000000 --n-steps 6144 --RL-agent DQN --n-seeds 9
-
-```
 
