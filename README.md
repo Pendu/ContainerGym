@@ -1,11 +1,10 @@
-# A RL benchmark framework based on real world system ♻️
+# ContainerGym: A Real-World Reinforcement Learning Benchmark for Resource Allocation ♻️
 
 [<img src="https://img.shields.io/badge/license-MIT-blue">](https://github.com/vwxyzjn/cleanrl)
 ![supported python versions](https://img.shields.io/badge/python-%3C%203.10-306998)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 ![dependencies status](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen)
-[<img src="https://img.shields.io/badge/%F0%9F%A4%97%20Models-Huggingface-F8D521">](https://huggingface.co/cleanrl)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15GNDAoepHN524mFIQsieBJEohRtRt82z?usp=sharing)
 ## 🖊 Info
 
@@ -15,11 +14,13 @@
 ```txt
 📦bunkergym
  ┣ 📂configs -> Contains .json files  used to create an environment
- ┣ 📂experiments
+ ┣ 📂experiments 
+    ┣📂logs -> Contains logs of training
+    ┣📂results -> Graphs and results of evaluation
     ┃ ┣ 📜callbacks.py -> Callbacks for training
     ┃ ┣ 📜evaluate_agent.py -> Evaluation script
     ┃ ┗ 📜train_agent.py -> Training script
- ┣ 📂models/
+ ┣ 📂models
     ┃ ┣ 📜linear_press_models.py -> Press models for emptying containers
     ┃ ┗ 📜random_walk_models.py -> Random walk models for filling containers
  ┃ ┣ 📜env.py -> Environment module with the environment class
