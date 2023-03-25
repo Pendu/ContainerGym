@@ -2,7 +2,8 @@ import numpy as np
 import json
 from typing import Union
 
-class RewardEvaluator():
+
+class RewardEvaluator:
     def __init__(self, bunker_params: Union[dict, list], min_reward: float):
         # "overloading" constructor to allow params in dict or list form
         # if type(bunker_params) == dict:
@@ -18,18 +19,20 @@ class RewardEvaluator():
         with open(filename) as json_file:
             data = json.load(json_file)
 
-            bunker_params = data['REWARD_PARAMS']
-            min_reward = data['MIN_REWARD']
-            
+            bunker_params = data["REWARD_PARAMS"]
+            min_reward = data["MIN_REWARD"]
+
             return cls(bunker_params, min_reward)
 
-    def gaussian_reward_dict_params(self, action, current_volume, press_is_free, bunker_id): #TODO: Remove
+    def gaussian_reward_dict_params(
+        self, action, current_volume, press_is_free, bunker_id
+    ):  # TODO: Remove
         reward = 0
 
         if action > 0:
-            if current_volume == 0. or not press_is_free:
+            if current_volume == 0.0 or not press_is_free:
                 return self.min_reward
-            
+
             params = self.bunker_params[bunker_id]
 
             for i in range(len(params["peaks"])):
@@ -37,18 +40,24 @@ class RewardEvaluator():
                 height = params["heights"][i]
                 width = params["widths"][i]
 
-                reward += (height - self.min_reward) * np.exp(-(current_volume - peak) * (current_volume - peak) / (2. * width * width))
+                reward += (height - self.min_reward) * np.exp(
+                    -(current_volume - peak)
+                    * (current_volume - peak)
+                    / (2.0 * width * width)
+                )
 
             reward += self.min_reward
         return reward
 
-    def gaussian_reward_list_params(self, action, current_volume, press_is_free, bunker_id=None):
+    def gaussian_reward_list_params(
+        self, action, current_volume, press_is_free, bunker_id=None
+    ):
         reward = 0
 
         if action > 0:
-            if current_volume == 0. or not press_is_free:
+            if current_volume == 0.0 or not press_is_free:
                 return self.min_reward
-            
+
             bunker_idx = (action - 1) % self.n_bunkers
             bunker_params = self.bunker_params[bunker_idx]
 
@@ -57,7 +66,11 @@ class RewardEvaluator():
                 height = bunker_params[i][1]
                 width = bunker_params[i][2]
 
-                reward += (height - self.min_reward) * np.exp(-(current_volume - peak) * (current_volume - peak) / (2. * width * width))
+                reward += (height - self.min_reward) * np.exp(
+                    -(current_volume - peak)
+                    * (current_volume - peak)
+                    / (2.0 * width * width)
+                )
 
             reward += self.min_reward
         return reward
@@ -74,5 +87,6 @@ class RewardEvaluator():
         :return: Reward value between min_reward and 1
         """
 
-        return self.gaussian_reward_dict_params(action, current_volume, press_is_free, bunker_id)
-    
+        return self.gaussian_reward_dict_params(
+            action, current_volume, press_is_free, bunker_id
+        )
