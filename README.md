@@ -8,7 +8,7 @@
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15GNDAoepHN524mFIQsieBJEohRtRt82z?usp=sharing)
 ## 🖊 Info
 
-![](https://github.com/Your_Repository_Name/Your_GIF_Name.gif)
+![](https://github.com/Pendu/ContainerGym_Prefinal/blob/938b038025f2b47602aa264907bc185072c3c4f4/example.gif)
 
 ## 🏗 Folder Structure 
 
