@@ -1,6 +1,7 @@
-import numpy as np
 import json
 from typing import Union
+
+import numpy as np
 
 
 class RewardEvaluator:

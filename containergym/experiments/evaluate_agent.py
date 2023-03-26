@@ -1,20 +1,21 @@
 import os
-import os
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 import argparse
-from multiprocessing import Process
 from distutils.util import strtobool
-import numpy as np
-import matplotlib.pyplot as plt
+from multiprocessing import Process
+
 import matplotlib.lines as mlines
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
-from stable_baselines3 import PPO, DQN, A2C
-from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common import results_plotter
-from containergym.env import ContainerEnv
 from gym.wrappers import FlattenObservation
+from stable_baselines3 import A2C, DQN, PPO
+from stable_baselines3.common import results_plotter
+from stable_baselines3.common.monitor import Monitor
+
+from containergym.env import ContainerEnv
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 torch.set_num_threads(1)

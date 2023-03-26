@@ -1,9 +1,10 @@
 import os
-from tqdm.auto import tqdm
+
 import numpy as np
 import pandas as pd
-from stable_baselines3.common.results_plotter import load_results, ts2xy
 from stable_baselines3.common.callbacks import BaseCallback
+from stable_baselines3.common.results_plotter import load_results, ts2xy
+from tqdm.auto import tqdm
 
 
 class SaveOnBestTrainingRewardCallback(BaseCallback):

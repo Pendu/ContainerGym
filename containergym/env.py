@@ -1,14 +1,15 @@
-from math import floor
-import gym
-from gym import spaces
-from containergym.reward import RewardEvaluator
-from models.random_walk_models import VectorizedRandomWalkModel
-from models.linear_press_models import PressModel
-from typing import Union
 import json
-import numpy as np
-import matplotlib.pyplot as plt
+from math import floor
+from typing import Union
 
+import gym
+import matplotlib.pyplot as plt
+import numpy as np
+from gym import spaces
+
+from containergym.reward import RewardEvaluator
+from models.linear_press_models import PressModel
+from models.random_walk_models import VectorizedRandomWalkModel
 
 
 # TODO: Asserts, input validation

@@ -1,19 +1,21 @@
-import sys
 import os
+import sys
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
-from datetime import datetime
-import torch
-from stable_baselines3 import PPO, DQN, A2C
-from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.evaluation import evaluate_policy
-from stable_baselines3.common import results_plotter
-from multiprocessing import Process
-from containergym.experiments.callbacks import *
-from containergym.env import ContainerEnv
-from gym.wrappers import FlattenObservation
 import argparse
 import os
+from datetime import datetime
+from multiprocessing import Process
+
+import torch
+from gym.wrappers import FlattenObservation
+from stable_baselines3 import A2C, DQN, PPO
+from stable_baselines3.common import results_plotter
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.monitor import Monitor
+
+from containergym.env import ContainerEnv
+from containergym.experiments.callbacks import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 torch.set_num_threads(1)

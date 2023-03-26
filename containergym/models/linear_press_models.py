@@ -1,5 +1,6 @@
+from typing import Optional, Union
+
 import numpy as np
-from typing import Union, Optional
 
 """
 Press models are linear of the form:
