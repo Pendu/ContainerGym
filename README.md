@@ -8,7 +8,7 @@
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15GNDAoepHN524mFIQsieBJEohRtRt82z?usp=sharing)
 ## 🖊 Info
 ### Example render of the ContainerGym environment during evaluation
-![](https://github.com/Pendu/ContainerGym_Prefinal/example.gif)
+![](https://github.com/Pendu/ContainerGym_Prefinal/blob/2c3589ef8c90c77832ccc0808fc7aafa6eec1713/example.gif)
 
 ## 🏗 Folder Structure 
 
