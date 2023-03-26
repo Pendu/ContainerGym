@@ -12,7 +12,7 @@
 ## 🏗 Folder Structure 
 
 ```txt
-📦bunkergym
+📦containergym
  ┣ 📂configs -> Contains .json files  used to create an environment
  ┣ 📂experiments 
     ┣📂logs -> Contains logs of training
@@ -36,12 +36,12 @@
 * Python >=3.7.1,<3.10 (not yet 3.10)
 * [Poetry 1.2.1+](https://python-poetry.org)
 
-## 🤖 Usage- Method-1: Using poetry
+## 🤖 Using poetry
 
 Clone the repository and run the following command from the root directory of the repository.
 
 ```{bash}
-git clone https://github.com/Pendu/ContainerGym_Prefinal.git && cd bunkergym
+git clone https://github.com/Pendu/ContainerGym_Prefinal.git && cd containergym
 poetry install
 poetry shell
 
@@ -52,25 +52,25 @@ Run the following commands from the root directory of the repository.
 
 ```
 
-poetry run python3 -m bunkergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
+poetry run python3 -m containergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
 
 ```
 ### 📊 Evaluation
 
 ```
 
-poetry run python3 -m bunkergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
+poetry run python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2 --render-episode True 
 
 ```
 
-## 🤖 Usage- Method-2: Using pip
+## 🤖 Using pip
 
 Create a virtual environment and run the following command from the root directory of the repository.
 
 ```{bash}
 python3 -m venv temp_venv
 source temp_venv/bin/activate
-pip install -i https://test.pypi.org/simple/ bunkergym==1.3.0 --extra-index-url https://pypi.org/simple
+pip install -i https://test.pypi.org/simple/ containergym --extra-index-url https://pypi.org/simple
 
 ```
 Run the following commands from the root directory of the repository.
@@ -79,7 +79,7 @@ Run the following commands from the root directory of the repository.
 
 ```
 
-python3 -m bunkergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
+python3 -m containergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
 
 ```
 
@@ -87,7 +87,7 @@ python3 -m bunkergym.experiments.train_agent --config-file 1bunker1_1press.json 
 
 ```
 
-python3 -m bunkergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
+python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2 --render-episode True 
 
 ```
 
