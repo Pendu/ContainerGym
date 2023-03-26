@@ -7,7 +7,7 @@
 ![dependencies status](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15GNDAoepHN524mFIQsieBJEohRtRt82z?usp=sharing)
 ## 🖊 Info
-###Example render of the ContainerGym environment during evaluation
+### Example render of the ContainerGym environment during evaluation
 ![](https://github.com/Pendu/ContainerGym_Prefinal/blob/938b038025f2b47602aa264907bc185072c3c4f4/example.gif)
 
 ## 🏗 Folder Structure 
