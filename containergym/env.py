@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+
 # TODO: Asserts, input validation
 class ContainerEnv(gym.Env):
     """
@@ -289,24 +290,29 @@ class ContainerEnv(gym.Env):
         self.state.reset(self.min_starting_volume, self.max_starting_volume)
         return self.state.to_dict()
 
+
     def render(self, y_volumes=None):
         # Plotting live volumes of bunkers during evaluation
         """
         :param y_volumes: input volumes
         :return: None
         """
+
         for i in range(self.n_bunkers):
             y_values = np.array(y_volumes)[:, i]
             x_values = np.arange(len(y_volumes))
             # plt.plot(x_values,y_values,label=self.enabled_bunkers[i], linestyle='--')
             plt.plot(x_values, y_values, linestyle="--")
             # plt.legend()
-            plt.axis([0, self.max_episode_length, 0, 40])
+            plt.axis([0, self.max_episode_length, 0, 35])
         plt.legend([i for i in self.enabled_bunkers])
-        # ax.legend(["Value 1 ","Value 2","Value 3"])
-        # plt.set_xlabel("Time")
-        # plt.set_ylabel("Volumes")
-        plt.title("Dynamic line graphs")
+        plt.xlabel("Time", fontsize=16)
+        plt.ylabel("Volumes", fontsize=16)
+        plt.title("Dynamic volumes of Containers", fontsize=20)
+        plt.savefig(f'./img/img_{self.state.episode_length}.png',
+                    transparent=False,
+                    facecolor='white',
+                    )
         plt.pause(0.0125)
 
 

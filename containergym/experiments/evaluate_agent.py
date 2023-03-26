@@ -152,7 +152,8 @@ def inference(seed, args):
     step = 0
 
     episode_length = 0
-
+    plt.figure(figsize=(15, 10))
+    plt.ion()
     # Run episode
     while True:
         episode_length += 1
@@ -168,6 +169,7 @@ def inference(seed, args):
         if done:
             break
         step += 1
+    plt.ioff()
 
     # Plot state variables
     fig = plt.figure(figsize=(15, 10))
@@ -312,7 +314,7 @@ def inference(seed, args):
             format=fig_format,
         )
 
-    plt.show()
+    #plt.show()
 
 
 if __name__ == "__main__":

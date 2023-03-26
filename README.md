@@ -1,13 +1,14 @@
 # ContainerGym: A Real-World Reinforcement Learning Benchmark for Resource Allocation ♻️
 
 [<img src="https://img.shields.io/badge/license-MIT-blue">](https://github.com/vwxyzjn/cleanrl)
-![supported python versions](https://img.shields.io/badge/python-%3C%203.10-306998)
+![supported python versions](https://img.shields.io/badge/python-%3E%3D%203.7-306998)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 ![dependencies status](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15GNDAoepHN524mFIQsieBJEohRtRt82z?usp=sharing)
 ## 🖊 Info
 
+![](https://github.com/Your_Repository_Name/Your_GIF_Name.gif)
 
 ## 🏗 Folder Structure 
 
@@ -33,7 +34,7 @@
 
 ### Pre-requisites
 
-* Python >=3.7.1,<3.10 (not yet 3.10)
+* Python >=3.7.1,<3.10
 * [Poetry 1.2.1+](https://python-poetry.org)
 
 ## 🤖 Using poetry
