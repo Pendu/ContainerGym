@@ -1,7 +1,7 @@
 from math import floor
 import gym
 from gym import spaces
-from bunkergym.reward import RewardEvaluator
+from containergym.reward import RewardEvaluator
 from models.random_walk_models import VectorizedRandomWalkModel
 from models.linear_press_models import PressModel
 from typing import Union

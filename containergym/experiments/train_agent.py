@@ -9,8 +9,8 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common import results_plotter
 from multiprocessing import Process
-from bunkergym.experiments.callbacks import *
-from bunkergym.env import ContainerEnv
+from containergym.experiments.callbacks import *
+from containergym.env import ContainerEnv
 from gym.wrappers import FlattenObservation
 import argparse
 import os

@@ -13,7 +13,7 @@ import torch
 from stable_baselines3 import PPO, DQN, A2C
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common import results_plotter
-from bunkergym.env import ContainerEnv
+from containergym.env import ContainerEnv
 from gym.wrappers import FlattenObservation
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""

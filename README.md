@@ -68,8 +68,8 @@ poetry run python3 -m bunkergym.experiments.evaluate_agent --config-file 1bunker
 Create a virtual environment and run the following command from the root directory of the repository.
 
 ```{bash}
-python3 venv venv
-source venv/bin/activate
+python3 -m venv temp_venv
+source temp_venv/bin/activate
 pip install -i https://test.pypi.org/simple/ bunkergym==1.3.0 --extra-index-url https://pypi.org/simple
 
 ```

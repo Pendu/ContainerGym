@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "bunkergym"
-version = "1.3.0"
+name = "containergym"
+version = "1.4.0"
 description = "Real world RL benchmark for sequential decision making problems"
 authors = ["abhijeet <p.abhijeet777@gmail.com>"]
 readme = "README.md"
