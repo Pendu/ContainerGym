@@ -309,10 +309,6 @@ class ContainerEnv(gym.Env):
         plt.xlabel("Time", fontsize=16)
         plt.ylabel("Volumes", fontsize=16)
         plt.title("Dynamic volumes of Containers", fontsize=20)
-        plt.savefig(f'./img/img_{self.state.episode_length}.png',
-                    transparent=False,
-                    facecolor='white',
-                    )
         plt.pause(0.0125)
 
 
