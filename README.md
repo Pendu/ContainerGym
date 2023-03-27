@@ -94,7 +94,7 @@ python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press
 
 ```
 
-## 🎭 Support and get involved
+## 🎭 Support and Contributions
 
 Feel free to ask questions. Posting in [Github Issues]( https://github.com/Pendu/ContainerGym_Prefinal/issues) and PRs are also welcome.
 
