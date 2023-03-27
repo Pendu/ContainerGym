@@ -79,6 +79,44 @@ def parse_args():
 
     return args
 
+class rulebased_agent():
+        def __init__(self):
+            self.peak_rew_vols = {"C1-10": [19.84],
+                                  "C1-20": [26.75],
+                                  "C1-30": [8.84, 17.70, 26.56],
+                                  "C1-40": [8.40, 16.80, 25.19],
+                                  "C1-50": [4.51, 9.02, 13.53],
+                                  "C1-60": [7.19, 14.38, 21.57],
+                                  "C1-70": [8.65, 17.31, 25.96],
+                                  "C1-80": [12.37, 24.74],
+                                  "C2-10": [27.39],
+                                  "C2-20": [37.04],
+                                  "C2-40": [8.58, 17.17, 25.77],
+                                  "C2-50": [4.60, 9.21, 13.82],
+                                  "C2-60": [8.58, 17.17, 25.77],
+                                  "C2-70": [13.22, 26.46],
+                                  "C2-80": [28.75],
+                                  "C2-90": [5.76, 11.50, 17.26]}
+
+        def predict(self, obs=None, env_s=None, peak_vols=None):
+            clash_counter = 0
+            for i in range(env_s.n_bunkers):
+                if peak_vols[i] - 1 < obs[i] < peak_vols[i] + 1:
+                    action = i + 1
+                    clash_counter += 1
+                elif obs[i] > peak_vols[i] + 1:
+                    action = i + 1
+                    clash_counter += 1
+                elif not clash_counter:
+                    action = 0
+            return action
+
+        def set_env(self, env_s=None):
+            peak_vols = []
+            for i in range(env_s.n_bunkers):
+                print(env_s.enabled_bunkers[i])
+                peak_vols.append(self.peak_rew_vols[env_s.enabled_bunkers[i]][-1])
+            return peak_vols
 
 def inference(seed, args):
     """
@@ -112,9 +150,11 @@ def inference(seed, args):
         run_name.split("budget_")[-1].split("_")[0]
     )  # Parse budget from run name
 
-    results_plotter.plot_results(
-        [log_dir], budget, results_plotter.X_TIMESTEPS, f"{args.RL_agent} ContainerEnv"
-    )
+    if args.RL_agent in ["PPO", "A2C", "DQN", "TRPO"]:
+
+        results_plotter.plot_results(
+            [log_dir], budget, results_plotter.X_TIMESTEPS, f"{args.RL_agent} ContainerEnv"
+        )
 
     log_dir_results = os.path.dirname(os.path.abspath(__file__)) + "/results/"
     os.makedirs(log_dir_results, exist_ok=True)
@@ -143,6 +183,10 @@ def inference(seed, args):
         model = A2C.load(log_dir + "best_model.zip")
     elif args.RL_agent == "DQN":
         model = DQN.load(log_dir + "best_model.zip")
+    elif args.RL_agent == "rulebased":
+        model = rulebased_agent()
+        peak_vols = model.set_env(env)
+
 
     # Keep track of state variables (volumes), actions, and rewards
     volumes = []
@@ -158,7 +202,10 @@ def inference(seed, args):
     # Run episode
     while True:
         episode_length += 1
-        action, _ = model.predict(obs, deterministic=deterministic_policy)
+        if args.RL_agent == "rulebased":
+            action = model.predict(env_s = env, obs = obs[env.n_presses:].copy(), peak_vols = peak_vols)
+        else:
+            action, _ = model.predict(obs, deterministic=deterministic_policy)
         actions.append(action)
         obs, reward, done, info = env.step(action)
         volumes.append(obs[env.n_presses :].copy())
@@ -242,7 +289,7 @@ def inference(seed, args):
             ax3.scatter(
                 i, rewards[i], linewidth=line_width, color=default_color, clip_on=False
             )
-        elif press_indices[i] == 0:  # Action: "use Press 1"
+        else:
             ax2.scatter(
                 i,
                 actions[i],
@@ -257,46 +304,7 @@ def inference(seed, args):
                 color=color_code[env_unwrapped.enabled_bunkers[actions[i] - 1]],
                 clip_on=False,
             )
-        elif press_indices[i] == 1:  # Action: "use Press 2"
-            ax2.scatter(
-                i,
-                actions[i],
-                linewidth=line_width,
-                color=color_code[
-                    env_unwrapped.enabled_bunkers[
-                        actions[i] - env_unwrapped.n_bunkers - 1
-                    ]
-                ],
-                marker="x",
-            )
-            ax3.scatter(
-                i,
-                rewards[i],
-                linewidth=line_width,
-                color=color_code[
-                    env_unwrapped.enabled_bunkers[
-                        actions[i] - env_unwrapped.n_bunkers - 1
-                    ]
-                ],
-                clip_on=False,
-            )
 
-        else:
-            print("Unrecognised action: ", actions[i])
-
-    ax2.legend(
-        handles=[
-            mlines.Line2D(
-                [], [], color="black", marker="^", linestyle="None", label="Press 1"
-            ),
-            mlines.Line2D(
-                [], [], color="black", marker="x", linestyle="None", label="Press 2"
-            ),
-        ],
-        bbox_to_anchor=(1.09, 1),
-        loc="upper right",
-        borderaxespad=0.0,
-    )
     ax3.annotate(
         "Cum rew: {:.2f}".format(sum(rewards)),
         xy=(0.85, 0.9),
