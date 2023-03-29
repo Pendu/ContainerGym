@@ -15,7 +15,7 @@ from stable_baselines3.common import results_plotter
 from stable_baselines3.common.monitor import Monitor
 
 from containergym.env import ContainerEnv
-from containergym.experiments.plot_avg_cum_rew_n_rollouts import *
+from containergym.experiments.calculate_avg_cum_rew_n_rollouts import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 torch.set_num_threads(1)
