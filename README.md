@@ -33,6 +33,7 @@
 ```
 
 ## 📚 Setup
+* Note: Training with TRPO not yet supported. The installation of sb3_contrib package in which the TRPO implementation is present is causing issues. I am are working on it.
 
 ### Pre-requisites
 
