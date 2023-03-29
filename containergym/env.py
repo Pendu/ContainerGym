@@ -302,9 +302,7 @@ class ContainerEnv(gym.Env):
         for i in range(self.n_bunkers):
             y_values = np.array(y_volumes)[:, i]
             x_values = np.arange(len(y_volumes))
-            # plt.plot(x_values,y_values,label=self.enabled_bunkers[i], linestyle='--')
             plt.plot(x_values, y_values, linestyle="--")
-            # plt.legend()
             plt.axis([0, self.max_episode_length, 0, 35])
         plt.legend([i for i in self.enabled_bunkers])
         plt.xlabel("Time", fontsize=16)
