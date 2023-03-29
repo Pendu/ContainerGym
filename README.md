@@ -76,7 +76,7 @@ poetry run python calculate_avg_cum_rew_n_rollouts.py --config-file 1bunker_1pre
 
 ## 🤖 Using pip
 
-Create a virtual environment and run the following command from the root directory of the repository.
+Create a virtual environment and run the following commands
 
 ```{bash}
 python3 -m venv temp_venv
