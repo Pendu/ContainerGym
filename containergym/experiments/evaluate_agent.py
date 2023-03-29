@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from stable_baselines3 import A2C, DQN, PPO
+from sb3_contrib import TRPO
 from stable_baselines3.common import results_plotter
 from stable_baselines3.common.monitor import Monitor
 
@@ -162,14 +163,46 @@ def inference(seed, args):
     """
 
 
-    deterministic_policy = True
     save_fig = True
     n_steps = args.n_steps
     seed = seed
     config_file = args.config_file
     fig_format = "svg"
+    budget = args.budget
+    config_file = args.config_file
+    budget = args.budget
+    ent_coef = args.ent_coeff
+    gamma = args.gamma
 
-    run_name = f"{args.RL_agent}_{args.config_file.replace('.json', '')}_seed_{seed}_budget_{args.budget}_ent-coef_{args.ent_coeff}_gamma_{args.gamma}_n_steps_{n_steps}"
+    if args.RL_agent in ["PPO", "A2C", "TRPO"]:
+        run_name = (
+                f"{args.RL_agent}_"
+                + config_file.replace(".json", "")
+                + "_seed_"
+                + str(seed)
+                + "_budget_"
+                + str(budget)
+                + "_ent-coef_"
+                + str(ent_coef)
+                + "_gamma_"
+                + str(gamma)
+                + "_n_steps_"
+                + str(n_steps)
+        )
+    else:
+        run_name = (
+                f"{args.RL_agent}_"
+                + config_file.replace(".json", "")
+                + "_seed_"
+                + str(seed)
+                + "_budget_"
+                + str(budget)
+                + "_ent-coef_"
+                + str(ent_coef)
+                + "_gamma_"
+                + str(gamma)
+        )
+
 
     fig_name = "run_trained_agent_deterministic_policy_" + run_name
 
@@ -179,16 +212,16 @@ def inference(seed, args):
         run_name.split("budget_")[-1].split("_")[0]
     )  # Parse budget from run name
 
-    if args.RL_agent in ["PPO", "A2C", "DQN", "TRPO"]:
-
-        results_plotter.plot_results(
-            [log_dir], budget, results_plotter.X_TIMESTEPS, f"{args.RL_agent} ContainerEnv"
-        )
+    # if args.RL_agent in ["PPO", "A2C", "DQN", "TRPO"]:
+    #
+    #     results_plotter.plot_results(
+    #         [log_dir], budget, results_plotter.X_TIMESTEPS, f"{args.RL_agent} ContainerEnv"
+    #     )
 
     log_dir_results = os.path.dirname(os.path.abspath(__file__)) + "/results/"
     os.makedirs(log_dir_results, exist_ok=True)
 
-    plt.savefig(log_dir_results + "train_reward_" + run_name + ".%s" % fig_format)
+    #plt.savefig(log_dir_results + "train_reward_" + run_name + ".%s" % fig_format)
 
     env = ContainerEnv.from_json(
         os.path.join(
@@ -222,7 +255,6 @@ def inference(seed, args):
     step = 0
     episode_length = 0
     plt.figure(figsize=(15, 10))
-    plt.ion()
 
     # Run episode and render
     while True:
@@ -242,7 +274,6 @@ def inference(seed, args):
         if done:
             break
         step += 1
-    plt.ioff()
 
     # Plot state variables during episode
     fig = plt.figure(figsize=(15, 10))
@@ -331,7 +362,7 @@ def inference(seed, args):
             format=fig_format,
         )
 
-    plt.show()
+    #plt.show()
 
 
 if __name__ == "__main__":
