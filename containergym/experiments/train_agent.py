@@ -103,6 +103,10 @@ def train(seed, args):
         + str(seed)
         + "_budget_"
         + str(budget)
+        + "_ent-coef_"
+        + str(ent_coef)
+        + "_gamma_"
+        + str(gamma)
         + "_n_steps_"
         + str(n_steps)
     )
