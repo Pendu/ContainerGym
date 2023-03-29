@@ -81,7 +81,7 @@ Create a virtual environment and run the following command from the root directo
 ```{bash}
 python3 -m venv temp_venv
 source temp_venv/bin/activate
-pip install -i https://test.pypi.org/simple/ containergym==1.7.1 --extra-index-url https://pypi.org/simple
+pip install -i https://test.pypi.org/simple/ containergym==1.7.2 --extra-index-url https://pypi.org/simple
 
 ```
 
