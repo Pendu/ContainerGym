@@ -63,6 +63,7 @@ poetry run python3 -m containergym.experiments.train_agent --config-file 1bunker
 ```
 
 poetry run python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2 --render-episode True 
+poetry run python plot_avg_cum_rew_n_rollouts.py --config-file 1bunker_1press.json --n-seeds 2 --RL-agent PPO --n-steps 2048 --budget 100000
 
 ```
 
@@ -93,6 +94,7 @@ python3 -m containergym.experiments.train_agent --config-file 1bunker1_1press.js
 python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2 --render-episode True 
 
 ```
+
 
 ## 🎭 Support and Contributions
 
