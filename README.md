@@ -56,20 +56,20 @@ poetry install
 poetry shell
 
 ```
-Run the following commands from the root directory of the repository.
+Run the following commands from experiments folder. 
 
 ### 👑 Training
 
 ```
 
-poetry run python3 -m containergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
+poetry run python train_agent.py --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
 
 ```
 ### 📊 Evaluation
 
 ```
 
-poetry run python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2 --render-episode True 
+poetry run python evaluate_agent.py --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2 --render-episode True 
 poetry run python calculate_avg_cum_rew_n_rollouts.py --config-file 1bunker_1press.json --n-seeds 2 --RL-agent PPO --n-steps 2048 --budget 100000
 
 ```
