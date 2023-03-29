@@ -10,12 +10,12 @@ import matplotlib.lines as mlines
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from gym.wrappers import FlattenObservation
 from stable_baselines3 import A2C, DQN, PPO
 from stable_baselines3.common import results_plotter
 from stable_baselines3.common.monitor import Monitor
 
 from containergym.env import ContainerEnv
+from containergym.experiments.plot_avg_cum_rew_n_rollouts import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 torch.set_num_threads(1)
@@ -55,7 +55,7 @@ def parse_args():
         "--inf-eplen",
         type=int,
         default=600,
-        help="total number of timesteps of the experiments",
+        help="total number of timesteps of the experiments (will be overwritten if it differs from the timesteps set from config file)",
     )
     parser.add_argument(
         "--n-steps",
@@ -74,6 +74,18 @@ def parse_args():
         type=str,
         default="PPO",
         help="The name of the agent to train the env",
+    )
+    parser.add_argument(
+        "--ent-coeff",
+        type=float,
+        default=0.0,
+        help="Entropy coefficient for the loss calculation",
+    )
+    parser.add_argument(
+        "--gamma",
+        type=float,
+        default=0.99,
+        help="Discount factor",
     )
     args = parser.parse_args()
 
@@ -118,6 +130,29 @@ class rulebased_agent():
                 peak_vols.append(self.peak_rew_vols[env_s.enabled_bunkers[i]][-1])
             return peak_vols
 
+def get_color_code():
+    """Dummy function to avoid defining color code in different places.
+    The user should make sure to define a color for each bunker contained in the environment.
+    """
+    color_code = {"C1-10": "#872657",  # raspberry
+                  "C1-20": "#0000FF",  # blue
+                  "C1-30": "#FFA500",  # orange
+                  "C1-40": "#008000",  # green
+                  "C1-50": "#B0E0E6",  # powderblue
+                  "C1-60": "#FF00FF",  # fuchsia
+                  "C1-70": "#800080",  # purple
+                  "C1-80": "#FF4500",  # orangered
+                  "C2-10": "#DB7093",  # palevioletred
+                  "C2-20": "#FF8C69",  # salmon1
+                  "C2-40": "#27408B",  # royalblue4
+                  "C2-50": "#54FF9F",  # seagreen1
+                  "C2-60": "#FF3E96",  # violet
+                  "C2-70": "#FFD700",  # gold1
+                  "C2-80": "#7FFF00",  # chartreuse1
+                  "C2-90": "#D2691E",  # chocolate
+                  }
+    return color_code
+
 def inference(seed, args):
     """
     The inference function is used to evaluate a trained agent and create plots of its performance.
@@ -128,19 +163,14 @@ def inference(seed, args):
     """
 
 
-    overwrite_episode_length = 1200
     deterministic_policy = True
     save_fig = True
-    ent_coef = 0.0
-    gamma = 0.99
     n_steps = args.n_steps
     seed = seed
-
     config_file = args.config_file
+    fig_format = "svg"
 
-    fig_format = "svg"  # png'
-
-    run_name = f"{args.RL_agent}_{args.config_file.replace('.json', '')}_seed_{seed}_budget_{args.budget}_n_steps_{n_steps}"
+    run_name = f"{args.RL_agent}_{args.config_file.replace('.json', '')}_seed_{seed}_budget_{args.budget}_ent-coef_{args.ent_coeff}_gamma_{args.gamma}_n_steps_{n_steps}"
 
     fig_name = "run_trained_agent_deterministic_policy_" + run_name
 
@@ -168,10 +198,7 @@ def inference(seed, args):
     )
     if args.inf_eplen:
         env.max_episode_length = args.inf_eplen
-    env = FlattenObservation(env)
 
-    if overwrite_episode_length:
-        env.max_episode_length = overwrite_episode_length
     env = Monitor(env)
     obs = env.reset()
 
@@ -193,13 +220,12 @@ def inference(seed, args):
     actions = []
     rewards = []
     press_indices = []
-
     step = 0
-
     episode_length = 0
     plt.figure(figsize=(15, 10))
     plt.ion()
-    # Run episode
+
+    # Run episode and render
     while True:
         episode_length += 1
         if args.RL_agent == "rulebased":
@@ -208,7 +234,7 @@ def inference(seed, args):
             action, _ = model.predict(obs, deterministic=deterministic_policy)
         actions.append(action)
         obs, reward, done, info = env.step(action)
-        volumes.append(obs[env.n_presses :].copy())
+        volumes.append(obs["Volumes"].copy())
         press_indices.append(info["press_indices"])
         # Toggle to render the episode
         if args.render_episode:
@@ -219,7 +245,7 @@ def inference(seed, args):
         step += 1
     plt.ioff()
 
-    # Plot state variables
+    # Plot state variables during episode
     fig = plt.figure(figsize=(15, 10))
     env_unwrapped = env.unwrapped
     if deterministic_policy:
@@ -251,37 +277,20 @@ def inference(seed, args):
     plt.xlabel("Time Steps", fontsize=12)
 
     default_color = "#1f77b4"  # Default Matplotlib blue color
-    color_code = {
-        "C1-10": "#872657",  # raspberry
-        "C1-20": "#0000FF",  # blue
-        "C1-30": "#FFA500",  # orange
-        "C1-40": "#008000",  # green
-        "C1-50": "#B0E0E6",  # powderblue
-        "C1-60": "#FF00FF",  # fuchsia
-        "C1-70": "#800080",  # purple
-        "C1-80": "#FF4500",  # orangered
-        "C2-10": "#DB7093",  # palevioletred
-        "C2-20": "#FF8C69",  # salmon1
-        "C2-40": "#27408B",  # royalblue4
-        "C2-50": "#54FF9F",  # seagreen1
-        "C2-60": "#FF3E96",  # violetred1
-        "C2-70": "#FFD700",  # gold1
-        "C2-80": "#7FFF00",  # chartreuse1
-        "C2-90": "#D2691E",  # chocolate
-    }
+    color_code = get_color_code()
     line_width = 3
 
-    # Plot volumes for each bunker
+    ## Plot volumes for each bunker
     for i in range(env_unwrapped.n_bunkers):
         ax1.plot(
             np.array(volumes)[:, i],
-            linewidth=3,
+            linewidth=line_width,
             label=env_unwrapped.enabled_bunkers[i],
             color=color_code[env_unwrapped.enabled_bunkers[i]],
         )
     ax1.legend(bbox_to_anchor=(1.085, 1), loc="upper right", borderaxespad=0.0)
 
-    # Plot actions
+    ## Plot actions and rewards
     x_axis = range(episode_length)
     for i in x_axis:
         if actions[i] == 0:  # Action: "do nothing"
@@ -323,14 +332,14 @@ def inference(seed, args):
             format=fig_format,
         )
 
-    #plt.show()
+    plt.show()
 
 
 if __name__ == "__main__":
     # get the arguments
     args = parse_args()
 
-    seeds = range(1, args.n_seeds)
+    seeds = range(1, args.n_seeds+1)
     processes = [Process(target=inference, args=(s, args)) for s in seeds]
 
     for p in processes:
