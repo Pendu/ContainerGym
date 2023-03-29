@@ -84,7 +84,7 @@ source temp_venv/bin/activate
 pip install -i https://test.pypi.org/simple/ containergym==1.7.1 --extra-index-url https://pypi.org/simple
 
 ```
-
+Additionally, follow the collab notebook. 
 
 ## 🎭 Support and Contributions
 
