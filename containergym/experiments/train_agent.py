@@ -8,7 +8,6 @@ from datetime import datetime
 from multiprocessing import Process
 
 import torch
-from gym.wrappers import FlattenObservation
 from stable_baselines3 import A2C, DQN, PPO
 from stable_baselines3.common import results_plotter
 from stable_baselines3.common.evaluation import evaluate_policy
@@ -62,6 +61,18 @@ def parse_args():
         default="PPO",
         help="The name of the agent to train the env",
     )
+    parser.add_argument(
+        "--ent-coeff",
+        type=float,
+        default=0.0,
+        help="Entropy coefficient for the loss calculation",
+    )
+    parser.add_argument(
+        "--gamma",
+        type=float,
+        default=0.99,
+        help="Discount factor",
+    )
     args = parser.parse_args()
 
     return args
@@ -81,8 +92,8 @@ def train(seed, args):
 
     config_file = args.config_file
     budget = args.budget
-    ent_coef = 0.0
-    gamma = 0.99
+    ent_coef = args.ent_coeff
+    gamma = args.gamma
     n_steps = args.n_steps
 
     name = (
@@ -105,7 +116,6 @@ def train(seed, args):
             os.path.dirname(os.path.abspath(__file__)), "../configs/" + config_file
         )
     )
-    env = FlattenObservation(env)
     env = Monitor(env, log_dir)
 
     # Create the callback: check every 1000 steps
@@ -113,10 +123,9 @@ def train(seed, args):
         check_freq=1000, log_dir=log_dir
     )
 
-    # model = PPO("MultiInputPolicy", env, seed=seed, verbose=0, ent_coef=ent_coef, gamma=gamma, n_steps=n_steps)
     if args.RL_agent == "PPO":
         model = PPO(
-            "MlpPolicy",
+            "MultiInputPolicy",
             env,
             seed=seed,
             verbose=0,
@@ -125,11 +134,11 @@ def train(seed, args):
             n_steps=n_steps,
         )
     elif args.RL_agent == "TRPO":
-        model = TRPO("MlpPolicy", env, seed=seed, verbose=0, n_steps=n_steps)
+        model = TRPO("MultiInputPolicy", env, seed=seed, verbose=0, n_steps=n_steps)
     elif args.RL_agent == "A2C":
-        model = A2C("MlpPolicy", env, seed=seed, verbose=0, n_steps=n_steps)
+        model = A2C("MultiInputPolicy", env, seed=seed, verbose=0, n_steps=n_steps)
     elif args.RL_agent == "DQN":
-        model = DQN("MlpPolicy", env, seed=seed, verbose=0)
+        model = DQN("MultiInputPolicy", env, seed=seed, verbose=0)
 
     start = datetime.now()
 
