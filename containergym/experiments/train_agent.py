@@ -9,6 +9,7 @@ from multiprocessing import Process
 
 import torch
 from stable_baselines3 import A2C, DQN, PPO
+from sb3_contrib import TRPO
 from stable_baselines3.common import results_plotter
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.monitor import Monitor
@@ -96,20 +97,34 @@ def train(seed, args):
     gamma = args.gamma
     n_steps = args.n_steps
 
-    name = (
-        f"{args.RL_agent}_"
-        + config_file.replace(".json", "")
-        + "_seed_"
-        + str(seed)
-        + "_budget_"
-        + str(budget)
-        + "_ent-coef_"
-        + str(ent_coef)
-        + "_gamma_"
-        + str(gamma)
-        + "_n_steps_"
-        + str(n_steps)
-    )
+    if args.RL_agent in ["PPO", "A2C", "TRPO"]:
+        name = (
+                f"{args.RL_agent}_"
+                + config_file.replace(".json", "")
+                + "_seed_"
+                + str(seed)
+                + "_budget_"
+                + str(budget)
+                + "_ent-coef_"
+                + str(ent_coef)
+                + "_gamma_"
+                + str(gamma)
+                + "_n_steps_"
+                + str(n_steps)
+        )
+    else:
+        name = (
+                f"{args.RL_agent}_"
+                + config_file.replace(".json", "")
+                + "_seed_"
+                + str(seed)
+                + "_budget_"
+                + str(budget)
+                + "_ent-coef_"
+                + str(ent_coef)
+                + "_gamma_"
+                + str(gamma)
+        )
 
     log_dir = os.path.dirname(os.path.abspath(__file__)) + "/logs/" + name + "/"
     os.makedirs(log_dir, exist_ok=True)
