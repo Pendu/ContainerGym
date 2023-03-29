@@ -84,7 +84,22 @@ source temp_venv/bin/activate
 pip install -i https://test.pypi.org/simple/ containergym==1.7.1 --extra-index-url https://pypi.org/simple
 
 ```
-Additionally, follow the collab notebook. 
+
+Example usage:
+
+```
+import containergym
+from containergym.experiments import train_agent
+from sb3_contrib import TRPO
+from containergym.env import ContainerEnv
+env = ContainerEnv()
+model = TRPO("MultiInputPolicy", env = env)
+model.learn(total_timesteps=10000, log_interval=4)
+model.save("TRPO_containerenv")
+
+```
+
+Additionally, follow the collab notebook (hyperlink in the icon above) to see how to use the environment and train an agent.
 
 ## 🎭 Support and Contributions
 
