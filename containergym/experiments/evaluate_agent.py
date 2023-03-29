@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from stable_baselines3 import A2C, DQN, PPO
-from sb3_contrib import TRPO
+#from sb3_contrib import TRPO
 from stable_baselines3.common import results_plotter
 from stable_baselines3.common.monitor import Monitor
 
