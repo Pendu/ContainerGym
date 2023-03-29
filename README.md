@@ -84,23 +84,6 @@ source temp_venv/bin/activate
 pip install -i https://test.pypi.org/simple/ containergym==1.7.1 --extra-index-url https://pypi.org/simple
 
 ```
-Run the following commands from the root directory of the repository.
-
-### 👑 Training
-
-```
-
-python3 -m containergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1
-
-```
-
-### 📊 Evaluation
-
-```
-
-python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1 --render-episode True 
-
-```
 
 
 ## 🎭 Support and Contributions
