@@ -89,7 +89,6 @@ Example usage:
 
 ```
 import containergym
-from containergym.experiments import train_agent
 from sb3_contrib import TRPO
 from containergym.env import ContainerEnv
 env = ContainerEnv()
