@@ -33,12 +33,18 @@
 ```
 
 ## 📚 Setup
-* Note: Training with TRPO not yet supported. The installation of sb3_contrib package in which the TRPO implementation is present is causing issues. I am are working on it.
 
 ### Pre-requisites
 
 * Python >=3.7.1,<3.10
 * [Poetry 1.2.1+](https://python-poetry.org)
+
+### Install poetry
+```{bash}
+curl -sSL https://install.python-poetry.org | python3 - 
+poetry --version
+```
+
 
 ## 🤖 Using poetry
 
@@ -75,7 +81,7 @@ Create a virtual environment and run the following command from the root directo
 ```{bash}
 python3 -m venv temp_venv
 source temp_venv/bin/activate
-pip install -i https://test.pypi.org/simple/ containergym --extra-index-url https://pypi.org/simple
+pip install -i https://test.pypi.org/simple/ containergym==1.7.1 --extra-index-url https://pypi.org/simple
 
 ```
 Run the following commands from the root directory of the repository.
@@ -84,7 +90,7 @@ Run the following commands from the root directory of the repository.
 
 ```
 
-python3 -m containergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2
+python3 -m containergym.experiments.train_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1
 
 ```
 
@@ -92,7 +98,7 @@ python3 -m containergym.experiments.train_agent --config-file 1bunker1_1press.js
 
 ```
 
-python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 2 --render-episode True 
+python3 -m containergym.experiments.evaluate_agent --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1 --render-episode True 
 
 ```
 
