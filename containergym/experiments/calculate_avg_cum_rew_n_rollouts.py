@@ -3,15 +3,10 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 import argparse
-from distutils.util import strtobool
-from multiprocessing import Process
-
-import matplotlib.lines as mlines
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from stable_baselines3 import A2C, DQN, PPO
-from stable_baselines3.common import results_plotter
+from sb3_contrib import TRPO
 from stable_baselines3.common.monitor import Monitor
 
 from containergym.env import ContainerEnv
