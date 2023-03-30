@@ -37,16 +37,15 @@
 ### Pre-requisites
 
 * Python >=3.7.1,<3.10
-* [Poetry 1.2.1+](https://python-poetry.org)
+
+
+## 🤖 1. Using poetry
 
 ### Install poetry
 ```{bash}
 curl -sSL https://install.python-poetry.org | python3 - 
 poetry --version
 ```
-
-
-## 🤖 Using poetry
 
 Clone the repository and run the following command from the root directory of the repository.
 
@@ -74,7 +73,7 @@ poetry run python calculate_avg_cum_rew_n_rollouts.py --config-file 1bunker_1pre
 
 ```
 
-## 🤖 Using pip
+## 🤖 2. Using pip
 
 Create a virtual environment and run the following commands
 
@@ -84,6 +83,12 @@ source temp_venv/bin/activate
 pip install -i https://test.pypi.org/simple/ containergym==1.7.2 --extra-index-url https://pypi.org/simple
 
 ```
+or alternatively, install latest from the main branch
+
+```{bash}
+pip install git+https://github.com/Pendu/ContainerGym_Prefinal.git
+```
+
 
 Example usage:
 
