@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "containergym"
-version = "1.7.1"
+version = "1.7.2"
 description = "Real world RL benchmark for sequential decision making problems"
 authors = ["abhijeet <p.abhijeet777@gmail.com>"]
 readme = "README.md"
@@ -10,6 +10,7 @@ python = ">=3.7.1,<3.10"
 gym = "0.17"
 stable-baselines3 = "1.4.0"
 sb3-contrib = "1.4.0"
+tqdm = "4.65.0"
 
 [build-system]
 requires = ["poetry-core"]
