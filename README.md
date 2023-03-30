@@ -61,14 +61,14 @@ Run the following commands from experiments folder.
 
 ```
 
-poetry run python train_agent.py --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1
+poetry run python train_agent.py --config-file 1bunker_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1
 
 ```
 ### 📊 Evaluation
 
 ```
 
-poetry run python evaluate_agent.py --config-file 1bunker1_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1 --render-episode True 
+poetry run python evaluate_agent.py --config-file 1bunker_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1 --render-episode True 
 poetry run python calculate_avg_cum_rew_n_rollouts.py --config-file 1bunker_1press.json --n-seeds 2 --RL-agent PPO --n-steps 2048 --budget 100000
 
 ```
