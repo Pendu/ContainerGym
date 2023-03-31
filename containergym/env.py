@@ -8,8 +8,8 @@ import numpy as np
 from gym import spaces
 
 from containergym.reward import RewardEvaluator
-from models.linear_press_models import PressModel
-from models.random_walk_models import VectorizedRandomWalkModel
+from containergym.models.linear_press_models import PressModel
+from containergym.models.random_walk_models import VectorizedRandomWalkModel
 
 
 # TODO: Asserts, input validation
@@ -23,47 +23,49 @@ class ContainerEnv(gym.Env):
         maximum number of steps of a simulation episode
     timestep: float
         length of a simulation step in seconds
-    enabled_bunkers: list
-        list of enabled bunkers. If dictionaries are provided for bunker parameters,
+    enabled_containers: list
+        list of enabled containers. If dictionaries are provided for container parameters,
         the names in this list must correspond to the keys in the parameter dictionaries.
     n_presses : int
         number of enabled presses
     min_starting_volume: float
-        minimum volume with which to initialize a bunker's volume
+        minimum volume with which to initialize a container's volume
     max_starting_volume: float
-        maximum volume with which to initialize a bunker's volume
+        maximum volume with which to initialize a container's volume
     failure_penalty: float
-        negative reward to apply if a bunker reaches critical volume
+        negative reward to apply if a container reaches critical volume
     rw_mus: list
-        list of mu values per bunker for the volume increasing random walk
+        list of mu values per container for the volume increasing random walk
     rw_sigmas: list
-        list of sigma values per bunker for the volume increasing random walk
+        list of sigma values per container for the volume increasing random walk
     max_volumes: Union[dict, list, np.ndarray]
-        dict of key=bunker_id and value=max_volume for each bunker.
-        Alternatively, a list or array can be given if bunker names are anonymous.
+        dict of key=container_id and value=max_volume for each container.
+        Alternatively, a list or array can be given if container names are anonymous.
     bale_sizes: Union[dict, list, np.ndarray]
-        dict of key=bunker_id and value=bale_size for each bunker.
-        Alternatively, a list or array can be given if bunker names are anonymous.
+        dict of key=container_id and value=bale_size for each container.
+        Alternatively, a list or array can be given if container names are anonymous.
     press_offsets: Union[dict, list, np.ndarray]
         constant time cost of actuating a press, regardless of the number of bales
     press_slopes: Union[dict, list, np.ndarray]
         slopes of the linear functions that determine pressing durations based on number of bales pressed
     reward_params: Union[dict, list]
-        dict of key=bunker_id and a nested dict with keys "peaks", "heights", and "widths" for each bunker,
-        which correspond to the ideal emptying volumes of the corresponding bunker and associated rewards.
-        Alternatively, a list may be given that contains tuples of these values for each bunker:
+        dict of key=container_id and a nested dict with keys "peaks", "heights", and "widths" for each container,
+        which correspond to the ideal emptying volumes of the corresponding container and associated rewards.
+        Alternatively, a list may be given that contains tuples of these values for each container:
         [[(b1_peak1, b1_height1, b1_width1), (b1_peak2, b1_height2, b1_width2)],
         [(b2_peak1, b2_height1, b2_width1), (b2_peak2, b2_height2, b2_width2)]]
-        for the case of two bunkers and two peaks each.
+        for the case of two containers and two peaks each.
     min_reward: float
         reward given to an agent, if it takes no action (action=0)
+    dict_observation: bool
+        flag to set true if dict observations are desired. Otherwise the box observation space is chosen.
     """
 
     def __init__(
         self,
         max_episode_length: int = 300,
         timestep: float = 60,
-        enabled_bunkers: list = ["C1-20"],
+        enabled_containers: list = ["C1-20"],
         n_presses: int = 1,
         min_starting_volume: float = 0,
         max_starting_volume: float = 30,
@@ -78,30 +80,31 @@ class ContainerEnv(gym.Env):
             "C1-20": {"peaks": [26.71], "heights": [1], "widths": [2]}
         },
         min_reward: float = -1e-1,
+        dict_observation: bool = True
     ):
         self.max_episode_length = max_episode_length
-        self.enabled_bunkers = enabled_bunkers
+        self.enabled_containers = enabled_containers
         self.n_presses = n_presses
         self.min_starting_volume = min_starting_volume
         self.max_starting_volume = max_starting_volume
         self.failure_penalty = failure_penalty
         self.timestep = timestep
         self.press_model = PressModel(
-            enabled_bunkers=enabled_bunkers, slopes=press_slopes, offsets=press_offsets
+            enabled_containers=enabled_containers, slopes=press_slopes, offsets=press_offsets
         )
         self.reward_evaluator = RewardEvaluator(
-            bunker_params=reward_params, min_reward=min_reward
+            container_params=reward_params, min_reward=min_reward
         )
 
         # Create RW object
 
-        if type(enabled_bunkers) == list:
-            mus = [rw_mus[bunker] for bunker in enabled_bunkers]
-            sigmas = [rw_sigmas[bunker] for bunker in enabled_bunkers]
+        if type(enabled_containers) == list:
+            mus = [rw_mus[container] for container in enabled_containers]
+            sigmas = [rw_sigmas[container] for container in enabled_containers]
         elif (
             (type(rw_mus) == list or type(rw_mus) == np.ndarray)
             and (type(rw_sigmas) == list or type(rw_sigmas) == np.ndarray)
-            and (type(enabled_bunkers) == int)
+            and (type(enabled_containers) == int)
         ):
             mus = rw_mus
             sigmas = rw_sigmas
@@ -114,52 +117,57 @@ class ContainerEnv(gym.Env):
 
         self.random_walk = VectorizedRandomWalkModel(mus=mus, sigmas=sigmas)
         # Overloading of the constructor based on given types
-        # Max Volumes: Vector of critical/maximum volumes for just the enabled bunkers
+        # Max Volumes: Vector of critical/maximum volumes for just the enabled containers
         if type(max_volumes) == dict:
             self.max_volumes = np.array(
-                [max_volumes[bunker] for bunker in enabled_bunkers]
+                [max_volumes[container] for container in enabled_containers]
             )
         elif type(max_volumes) == list:
             self.max_volumes = np.array(max_volumes)
         elif type(max_volumes) == np.ndarray:
             self.max_volumes = max_volumes
 
-        # Bale Sizes: Vector of bale sizes for just the enabled bunkers
+        # Bale Sizes: Vector of bale sizes for just the enabled containers
         if type(bale_sizes) == dict:
             self.bale_sizes = np.array(
-                [bale_sizes[bunker] for bunker in enabled_bunkers]
+                [bale_sizes[container] for container in enabled_containers]
             )
         elif type(bale_sizes) == list:
             self.bale_sizes = np.array(bale_sizes)
         elif type(bale_sizes) == np.ndarray:
             self.bale_sizes = bale_sizes
 
-        # Number of bunkers
-        if type(enabled_bunkers) == list and len(enabled_bunkers) > 0:
-            self.n_bunkers = len(enabled_bunkers)
-        else:  # Anonymous bunkers
-            self.n_bunkers = len(max_volumes)
-            self.enabled_bunkers = len(max_volumes)
+        # Number of containers
+        if type(enabled_containers) == list and len(enabled_containers) > 0:
+            self.n_containers = len(enabled_containers)
+        else:  # Anonymous containers
+            self.n_containers = len(max_volumes)
+            self.enabled_containers = len(max_volumes)
 
         if n_presses < 1:
             raise ValueError("Must enable at least one press")
 
         # Create internal state object
-        self.state = State(self.n_bunkers, self.n_presses)
+        self.state = State(self.n_containers, self.n_presses)
 
-        # Create action space based on how many bunkers exist
-        self.action_space = spaces.Discrete(self.n_bunkers + 1)
+        # Create action space based on how many containers exist
+        self.action_space = spaces.Discrete(self.n_containers + 1)
 
-        self.observation_space = spaces.Dict(
-            {
-                "Volumes": spaces.Box(low=-100, high=100, shape=(self.n_bunkers,)),
-                "Time presses will be free": spaces.Box(
-                    low=0, high=np.inf, shape=(self.n_presses,)
-                ),
-            }
-        )
-        # TODO: Move away from Dict observation space
-        # self.observation_space = spaces.Box(low=0, high=np.inf, shape=(self.n_bunkers + self.n_presses))
+        # Create observation space 
+        self.dict_observation = dict_observation
+        if dict_observation:
+            self.observation_space = spaces.Dict(
+                {
+                    "Volumes": spaces.Box(low=-100, high=100, shape=(self.n_containers,)),
+                    "Time presses will be free": spaces.Box(
+                        low=0, high=np.inf, shape=(self.n_presses,)
+                    ),
+                }
+            )
+        else:
+            self.observation_space = spaces.Box(
+                low=0, high=np.inf, shape=(self.n_containers + self.n_presses)
+            )
 
     @classmethod
     def from_json(cls, filepath):
@@ -176,7 +184,7 @@ class ContainerEnv(gym.Env):
             obj = cls(
                 max_episode_length=data.get("MAX_EPISODE_LENGTH", 300),
                 timestep=data.get("TIMESTEP", 60),
-                enabled_bunkers=data.get("ENABLED_BUNKERS", ["C1-20"]),
+                enabled_containers=data.get("ENABLED_CONTAINERS", ["C1-20"]),
                 n_presses=data.get("N_PRESSES", 1),
                 min_starting_volume=data.get("MIN_STARTING_VOLUME", 0),
                 max_starting_volume=data.get("MAX_STARTING_VOLUME", 30),
@@ -205,27 +213,27 @@ class ContainerEnv(gym.Env):
 
         press_is_free = False  # Used to calculate reward at the end of the step
         emptied_volume = (
-            0  # Current volume of the bunker that should be emptied, also for reward
+            0  # Current volume of the container that should be emptied, also for reward
         )
-        bunker_id = ""  # Name of the bunker that should be emptied
-        bunker_idx = -1  # Index of the bunker that should be emptied
+        container_id = ""  # Name of the container that should be emptied
+        container_idx = -1  # Index of the container that should be emptied
         press_idx = 0  # Index of the press that should be used
 
         # Get number of bales to be pressed
         n_bales = 0
         if action != 0:
-            bunker_idx = (action - 1) % self.n_bunkers
-            bunker_id = (
-                self.enabled_bunkers[bunker_idx]
-                if type(self.enabled_bunkers) == list
-                else bunker_idx
+            container_idx = (action - 1) % self.n_containers
+            container_id = (
+                self.enabled_containers[container_idx]
+                if type(self.enabled_containers) == list
+                else container_idx
             )
             n_bales = floor(
-                self.state.volumes[bunker_idx] / self.bale_sizes[bunker_idx]
+                self.state.volumes[container_idx] / self.bale_sizes[container_idx]
             )
-            emptied_volume = self.state.volumes[bunker_idx]
+            emptied_volume = self.state.volumes[container_idx]
 
-        # Fill bunkers now, so that after emptying, all volumes are increased and the emptied bunker set to 0
+        # Fill containers now, so that after emptying, all volumes are increased and the emptied container set to 0
         self.state.volumes = self.random_walk.future_volume(
             self.state.volumes, self.timestep
         )
@@ -242,7 +250,7 @@ class ContainerEnv(gym.Env):
                 t_pressing_ends = self.press_model.get_pressing_time(
                     current_time=0,
                     time_prev_pressing_done=self.state.press_times[press_idx],
-                    bunker_idx=bunker_idx,
+                    container_idx=container_idx,
                     n_bales=n_bales,
                 )
 
@@ -250,7 +258,7 @@ class ContainerEnv(gym.Env):
                     # Emptying is possible
                     press_is_free = True  # Used to calculate reward later
                     # Update state
-                    self.state.volumes[bunker_idx] = 0
+                    self.state.volumes[container_idx] = 0
                     self.state.press_times[press_idx] = t_pressing_ends
             else:
                 # Emptying is not possible
@@ -266,15 +274,15 @@ class ContainerEnv(gym.Env):
 
         # Calculate reward
         current_reward = self.reward_evaluator.reward(
-            action, emptied_volume, press_is_free, bunker_id
+            action, emptied_volume, press_is_free, container_id
         )
 
-        # Check if episode is done. An episode ends if at least one bunker has exceeded max. vol.
+        # Check if episode is done. An episode ends if at least one container has exceeded max. vol.
         # or if max. episode length is reached.
         done = False
 
         if not (self.state.volumes < self.max_volumes).all():
-            # At least one bunker has exceeded max. vol.
+            # At least one container has exceeded max. vol.
             done = True
             current_reward = self.failure_penalty  # apply failure penalty
 
@@ -283,28 +291,32 @@ class ContainerEnv(gym.Env):
             done = True
 
         info = {"press_indices": press_idx}
-        return self.state.to_dict(), current_reward, done, info
+        if self.dict_observation: 
+            obs = self.state.to_dict()
+        else: 
+            obs = self.state.to_box()
+        return obs, current_reward, done, info
 
     def reset(self):
         # Reset state
-        self.state = State(self.n_bunkers, self.n_presses)
+        self.state = State(self.n_containers, self.n_presses)
         self.state.reset(self.min_starting_volume, self.max_starting_volume)
         return self.state.to_dict()
 
 
     def render(self, y_volumes=None):
-        # Plotting live volumes of bunkers during evaluation
+        # Plotting live volumes of containers during evaluation
         """
         :param y_volumes: input volumes
         :return: None
         """
 
-        for i in range(self.n_bunkers):
+        for i in range(self.n_containers):
             y_values = np.array(y_volumes)[:, i]
             x_values = np.arange(len(y_volumes))
             plt.plot(x_values, y_values, linestyle="--")
             plt.axis([0, self.max_episode_length, 0, 35])
-        plt.legend([i for i in self.enabled_bunkers])
+        plt.legend([i for i in self.enabled_containers])
         plt.xlabel("Time", fontsize=16)
         plt.ylabel("Volumes", fontsize=16)
         plt.title("Dynamic volumes of Containers", fontsize=20)
@@ -312,35 +324,42 @@ class ContainerEnv(gym.Env):
 
 
 class State:
-    def __init__(self, enabled_bunkers, n_presses):
+    def __init__(self, enabled_containers, n_presses):
         """"
-        :param enabled_bunkers: list of enabled bunkers
+        :param enabled_containers: list of enabled containers
         :param n_presses: number of presses
         """
         self.episode_length = 0
-        if type(enabled_bunkers) == list:
-            self.volumes = np.zeros(len(enabled_bunkers))
-        elif type(enabled_bunkers) == int:
-            self.volumes = np.zeros(enabled_bunkers)
+        if type(enabled_containers) == list:
+            self.volumes = np.zeros(len(enabled_containers))
+        elif type(enabled_containers) == int:
+            self.volumes = np.zeros(enabled_containers)
         else:
-            raise ValueError("enabled_bunkers must be of type list or int")
+            raise ValueError("enabled_containers must be of type list or int")
         self.press_times = np.zeros(n_presses)
 
     def reset(self, min_volumes, max_volumes):
         # Reset volumes to random values between min_volumes and max_volumes
         """"
-        :param min_volumes: minimum volume of each bunker
-        :param max_volumes: maximum volume of each bunker
+        :param min_volumes: minimum volume of each container
+        :param max_volumes: maximum volume of each container
         """
         self.volumes = np.random.uniform(
             min_volumes, max_volumes, size=len(self.volumes)
         )
 
     def to_dict(self):
-
         """
         The to_dict function is used to convert the class into a dictionary. This is necessary for the gym environment to work.
         :param self: Refer to the object itself
         :return: A dictionary with the volumes and press times
         """
         return {"Volumes": self.volumes, "Time presses will be free": self.press_times}
+    
+    def to_box(self):
+        """
+        The to_box function is used to convert the class into a box. This is necessary for the gym environment to work.
+        :param self: Refer to the object itself
+        :return: A box-vector with the volumes and press times
+        """
+        return np.concatenate(self.volumes, self.press_times)

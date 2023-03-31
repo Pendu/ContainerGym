@@ -34,7 +34,7 @@ def parse_args():
     parser.add_argument(
         "--config-file",
         type=str,
-        default="1bunker_1press.json",
+        default="1container_1press.json",
         help="The name of the config file for the env",
     )
     parser.add_argument(
@@ -112,7 +112,7 @@ class rulebased_agent():
 
         def predict(self, obs=None, env_s=None, peak_vols=None):
             clash_counter = 0
-            for i in range(env_s.n_bunkers):
+            for i in range(env_s.n_containers):
                 if peak_vols[i] - 1 < obs[i] < peak_vols[i] + 1:
                     action = i + 1
                     clash_counter += 1
@@ -125,14 +125,14 @@ class rulebased_agent():
 
         def set_env(self, env_s=None):
             peak_vols = []
-            for i in range(env_s.n_bunkers):
-                print(env_s.enabled_bunkers[i])
-                peak_vols.append(self.peak_rew_vols[env_s.enabled_bunkers[i]][-1])
+            for i in range(env_s.n_containers):
+                print(env_s.enabled_containers[i])
+                peak_vols.append(self.peak_rew_vols[env_s.enabled_containers[i]][-1])
             return peak_vols
 
 def get_color_code():
     """Dummy function to avoid defining color code in different places.
-    The user should make sure to define a color for each bunker contained in the environment.
+    The user should make sure to define a color for each container contained in the environment.
     """
     color_code = {"C1-10": "#872657",  # raspberry
                   "C1-20": "#0000FF",  # blue
@@ -255,7 +255,6 @@ def inference(seed, args):
     press_indices = []
     step = 0
     episode_length = 0
-    plt.figure(figsize=(15, 10))
 
     # Run episode and render
     while True:
@@ -311,13 +310,13 @@ def inference(seed, args):
     color_code = get_color_code()
     line_width = 3
 
-    ## Plot volumes for each bunker
-    for i in range(env_unwrapped.n_bunkers):
+    ## Plot volumes for each container
+    for i in range(env_unwrapped.n_containers):
         ax1.plot(
             np.array(volumes)[:, i],
             linewidth=line_width,
-            label=env_unwrapped.enabled_bunkers[i],
-            color=color_code[env_unwrapped.enabled_bunkers[i]],
+            label=env_unwrapped.enabled_containers[i],
+            color=color_code[env_unwrapped.enabled_containers[i]],
         )
     ax1.legend(bbox_to_anchor=(1.085, 1), loc="upper right", borderaxespad=0.0)
 
@@ -334,14 +333,14 @@ def inference(seed, args):
                 i,
                 actions[i],
                 linewidth=line_width,
-                color=color_code[env_unwrapped.enabled_bunkers[actions[i] - 1]],
+                color=color_code[env_unwrapped.enabled_containers[actions[i] - 1]],
                 marker="^",
             )
             ax3.scatter(
                 i,
                 rewards[i],
                 linewidth=line_width,
-                color=color_code[env_unwrapped.enabled_bunkers[actions[i] - 1]],
+                color=color_code[env_unwrapped.enabled_containers[actions[i] - 1]],
                 clip_on=False,
             )
 
