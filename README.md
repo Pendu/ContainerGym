@@ -34,11 +34,11 @@
 
 ## 📚 Setup
 
-### Pre-requisites
+### Pre-requisites (Important)
 
-* Python >=3.7.1,<3.10
+* Python >=3.9.0,<3.10
 
-## 🤖 1. Using requirements.txt
+## 🤖 Installation
 
 Clone the repository and run the following command from the root directory of the repository.
 
@@ -56,6 +56,7 @@ source temp_venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## Try it out locally 
 ### 👑 Training
 
 ```
@@ -67,74 +68,16 @@ pip install -r requirements.txt
 ```
 
 python3 -m containergym.experiments.evaluate_agent --config-file 1container_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1 --render-episode True 
-python3 -m containergym.experiments.calculate_avg_cum_rew_n_rollouts --config-file 1container_1press.json --n-seeds 1 --RL-agent PPO --n-steps 2048 --budget 100000
 
 ```
 
-## 🤖 2. Using poetry
-
-### Install poetry
-```{bash}
-curl -sSL https://install.python-poetry.org | python3 - 
-poetry --version
+## Reproduce results from the paper
 ```
 
-Clone the repository and run the following command from the root directory of the repository.
-
-```{bash}
-git clone https://github.com/Pendu/ContainerGym_Prefinal.git
-cd ContainerGym_Prefinal
-poetry install
-poetry shell
-
-```
-Run the following commands from experiments folder. 
-
-### 👑 Training
-
-```
-cd experiments
-poetry run python train_agent.py --config-file 1container_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1
-
-```
-### 📊 Evaluation
+python3 -m containergym.experiments.reproduce_results_paper
 
 ```
 
-poetry run python evaluate_agent.py --config-file 1container_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1 --render-episode True 
-poetry run python calculate_avg_cum_rew_n_rollouts.py --config-file 1container_1press.json --n-seeds 2 --RL-agent PPO --n-steps 2048 --budget 100000
-
-```
-
-## 🤖 3. Using pip
-
-Create a virtual environment and run the following commands
-
-```{bash}
-python3 -m venv temp_venv
-source temp_venv/bin/activate
-pip install -i https://test.pypi.org/simple/ containergym==1.7.2 --extra-index-url https://pypi.org/simple
-
-```
-or alternatively, install latest from the benchmark branch (Note: you may need to login)
-
-```{bash}
-pip install git+https://github.com/Pendu/ContainerGym_Prefinal.git
-```
-
-
-Example usage:
-
-```
-import containergym
-from sb3_contrib import TRPO
-from containergym.env import ContainerEnv
-env = ContainerEnv()
-model = TRPO("MultiInputPolicy", env = env)
-model.learn(total_timesteps=10000, log_interval=4)
-model.save("TRPO_containerenv")
-
-```
 
 Additionally, follow the collab notebook (hyperlink in the icon above) to see how to use the environment and train an agent.
 
