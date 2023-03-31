@@ -37,6 +37,20 @@
 ### Pre-requisites (Important)
 
 * Python >=3.8.0,<3.11
+* optional guide for the user: If existing python version on Linux based system is not meeting the pre-requisites. 
+* Use pyenv to for installing a new python version 3.9.0 system-wide
+
+```{bash}
+sudo apt install curl
+curl https://pyenv.run | bash
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv virtualenv-init -)"
+exec $SHELL
+pyenv install 3.9.0
+pyenv global 3.9.0
+pyenv local 3.9.0
+```
 
 ## 🤖 Installation
 
