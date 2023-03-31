@@ -17,17 +17,19 @@
 ```txt
 📦containergym
  ┣ 📂configs -> Contains .json files  used to create an environment
- ┣ 📂experiments 
-    ┣📂logs -> Contains logs of training
-    ┣📂results -> Graphs and results of evaluation
-    ┃ ┣ 📜callbacks.py -> Callbacks for training
-    ┃ ┣ 📜evaluate_agent.py -> Evaluation script
-    ┃ ┗ 📜train_agent.py -> Training script
+ ┣ 📂playground -> To run local experiments
+    ┣ 📜callbacks.py -> Callbacks for training
+    ┣ 📜evaluate_agent.py -> Evaluation script
+    ┗ 📜train_agent.py -> Training script
  ┣ 📂models
-    ┃ ┣ 📜linear_press_models.py -> Press models for emptying containers
-    ┃ ┗ 📜random_walk_models.py -> Random walk models for filling containers
- ┃ ┣ 📜env.py -> Environment module with the environment class
+   ┣ 📜linear_press_models.py -> Press models for emptying containers
+   ┗ 📜random_walk_models.py -> Random walk models for filling containers
+ ┃ 📜env.py -> Environment module with the environment class
  ┣ 📜reward.py
+ ┣ 📂experiments -> To reproduce experiments from the paper
+    ┣📂logs_best_seeds -> Contains logs of training
+    ┣ 📜reproduce_results_paper.py
+    ┣ 📜rule_based_agent.py
  ┣ 📜project.toml
  ┗ 📜README.md   
 ```
@@ -36,7 +38,7 @@
 
 ### Pre-requisites (Important)
 
-* Python >=3.8.0,<3.11
+* Python >=3.9.0,<3.10
 * optional guide for the user: If existing python version on Linux based system is not meeting the pre-requisites. 
 * Use pyenv to for installing a new python version 3.9.0 system-wide
 
@@ -46,7 +48,6 @@ curl https://pyenv.run | bash
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init --path)"
 eval "$(pyenv virtualenv-init -)"
-exec $SHELL
 pyenv install 3.9.0
 pyenv global 3.9.0
 pyenv local 3.9.0
@@ -73,22 +74,18 @@ pip install -r requirements.txt
 ### 👑 Training
 
 ```
- python3 -m containergym.experiments.train_agent --config-file 1container_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1
-
+ python3 -m containergym.playground.train_agent --config-file 1container_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1
 ```
 ### 📊 Evaluation
 
 ```
-
-python3 -m containergym.experiments.evaluate_agent --config-file 1container_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1 --render-episode True 
-
+python3 -m containergym.playground.evaluate_agent --config-file 1container_1press.json --budget 100000 --n-steps 2048 --RL-agent PPO --n-seeds 1 --render-episode True 
 ```
 
 ## Reproduce results from the paper
 ```
-
-python3 -m containergym.experiments.reproduce_results_paper
-
+cd experiments
+python reproduce_results_paper.py
 ```
 
 ## 🎭 Support and Contributions
