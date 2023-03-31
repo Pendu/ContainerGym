@@ -1,7 +1,7 @@
 {
     "MAX_EPISODE_LENGTH": 300,
     "TIMESTEP": 60,
-    "ENABLED_BUNKERS": ["C1-10", "C1-20", "C1-30", "C1-40", "C1-50", "C1-60", "C1-70", "C1-80", "C2-10", "C2-20", "C2-40", "C2-50", "C2-60", "C2-70", "C2-80", "C2-90"],
+    "ENABLED_CONTAINERS": ["C1-10", "C1-20", "C1-30", "C1-40", "C1-50", "C1-60", "C1-70", "C1-80", "C2-10", "C2-20", "C2-40", "C2-50", "C2-60", "C2-70", "C2-80", "C2-90"],
     "N_PRESSES": 2,
     "MIN_STARTING_VOLUME": 0,
     "MAX_STARTING_VOLUME": 30,

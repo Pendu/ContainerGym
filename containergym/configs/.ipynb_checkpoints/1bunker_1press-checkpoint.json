@@ -1,0 +1,35 @@
+{
+    "MAX_EPISODE_LENGTH": 100,
+    "TIMESTEP": 60,
+    "ENABLED_BUNKERS": ["C1-20"],
+    "N_PRESSES": 1,
+    "MIN_STARTING_VOLUME": 0,
+    "MAX_STARTING_VOLUME": 30,
+    "FAILURE_PENALTY": -10,
+    "RW_MUS": {
+        "C1-20": 0.005767754387396311
+    },
+    "RW_SIGMAS": {
+        "C1-20": 0.055559018416836935
+    },
+    "MAX_VOLUMES": {
+        "C1-20": 32
+    },
+    "BALE_SIZES": {
+        "C1-20": 27
+    },
+    "PRESS_OFFSETS": {
+        "C1-20": 106.798502
+        },
+    "PRESS_SLOPES": {
+        "C1-20": 264.9
+        },
+    "REWARD_PARAMS": {
+        "C1-20": {
+            "peaks": [26.71],
+            "heights": [1],
+            "widths": [2]
+        }
+    },
+    "MIN_REWARD": -1e-1
+}

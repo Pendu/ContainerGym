@@ -3,7 +3,7 @@
 
     "TIMESTEP": 60,
 
-    "ENABLED_BUNKERS": 3,
+    "ENABLED_CONTAINERS": 3,
 
     "N_PRESSES": 2,
 
