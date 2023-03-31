@@ -78,6 +78,7 @@ def inference(args):
     log_dir_results = os.path.dirname(os.path.abspath(__file__)) + "/results_paper/"
 
     os.makedirs(log_dir, exist_ok=True)
+    os.makedirs(log_dir_results, exist_ok=True)
 
     env = ContainerEnv.from_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../configs/" + config_file))
     env = Monitor(env)
