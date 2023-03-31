@@ -26,10 +26,10 @@
    ┗ 📜random_walk_models.py -> Random walk models for filling containers
  ┃ 📜env.py -> Environment module with the environment class
  ┣ 📜reward.py
- ┣ 📂experiments -> To reproduce experiments from the paper
-    ┣📂logs_best_seeds -> Contains logs of training
-    ┣ 📜reproduce_results_paper.py
-    ┣ 📜rule_based_agent.py
+ 📦experiments -> To reproduce experiments from the paper
+  ┣📂logs_best_seeds -> Contains logs of training
+  ┣ 📜reproduce_results_paper.py
+  ┣ 📜rule_based_agent.py
  ┣ 📜project.toml
  ┗ 📜README.md   
 ```
