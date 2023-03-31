@@ -210,6 +210,7 @@ def inference(args):
         # Save plot
         file_name = fig_name+".png"
         plt.savefig(log_dir_results+file_name, dpi='figure',)
+    plt.close()
 
     print("Ratio of rewards equal to rpen: ",
           100 * len([x for x in rewards if x == -1e-1]) / len([x for x in rewards if x <= 0]))

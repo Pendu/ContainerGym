@@ -5,7 +5,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 ![dependencies status](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/15GNDAoepHN524mFIQsieBJEohRtRt82z?usp=sharing)
+
 ## 🖊 Info
 ### Example render of the ContainerGym environment during evaluation
 <p align="center">
@@ -36,16 +36,15 @@
 
 ### Pre-requisites (Important)
 
-* Python >=3.9.0,<3.10
+* Python >=3.8.0,<3.11
 
 ## 🤖 Installation
 
-Clone the repository and run the following command from the root directory of the repository.
+Clone the repository and run the following.
 
 ```{bash}
 git clone https://github.com/Pendu/ContainerGym_Prefinal.git 
 cd ContainerGym_Prefinal
-
 ```
 
 Create a virtual environment and run the following commands
@@ -77,9 +76,6 @@ python3 -m containergym.experiments.evaluate_agent --config-file 1container_1pre
 python3 -m containergym.experiments.reproduce_results_paper
 
 ```
-
-
-Additionally, follow the collab notebook (hyperlink in the icon above) to see how to use the environment and train an agent.
 
 ## 🎭 Support and Contributions
 
