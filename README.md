@@ -40,7 +40,7 @@
 
 * Python >=3.9.0,<3.10
 * optional guide for the user: If existing python version on Linux based system is not meeting the pre-requisites. 
-* Use pyenv to for installing a new python version 3.9.0 system-wide
+* Use pyenv for installing a new python version 3.9.0 system-wide
 
 ```{bash}
 sudo apt install curl
