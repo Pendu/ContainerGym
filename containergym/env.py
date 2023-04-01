@@ -12,7 +12,6 @@ from containergym.models.linear_press_models import PressModel
 from containergym.models.random_walk_models import VectorizedRandomWalkModel
 
 
-# TODO: Asserts, input validation
 class ContainerEnv(gym.Env):
     """
     Simplified ContainerEnv environment for OpenAI Gym.
