@@ -23,23 +23,34 @@ torch.set_num_threads(1)
 def run_trained_agent(log_dir, config_file='1container_1press.json', overwrite_episode_length=False,
                       overwrite_timestep=False, algorithm='ppo', deterministic_policy=True, fig_name='', format='png',
                       save_fig=False):
-    """Evaluates a trained agent and creates plots of its performance.
+    """
+    Evaluates a trained agent and creates plots of its performance.
+
     Parameters
     ----------
     log_dir : str
-        log directory in which the agent was saved
+        The log directory in which the agent was saved.
     config_file : str, optional
-        name of the config file used for the environment, by default '1container_1press.json'
-    overwrite_episode_length : int, optional
-        if a different episode length is desired in inference, set that length here
+        The name of the config file used for the environment. Default is '1container_1press.json'.
+    overwrite_episode_length : int or bool, optional
+        If a different episode length is desired in inference, set that length here. Default is `False`.
+    overwrite_timestep : int or bool, optional
+        If a different timestep is desired in inference, set that timestep here. Default is `False`.
+    algorithm : str, optional
+        The RL algorithm used for training the agent. Valid options are: 'ppo', 'trpo', 'dqn', and 'deterministic'.
+        Default is 'ppo'.
     deterministic_policy : bool, optional
-        whether to sample from deterministic policy, by default True
+        Whether to sample from a deterministic policy. Default is `True`.
     fig_name : str, optional
-        figure name for the generated plots, by default ''
+        The figure name for the generated plots. Default is an empty string.
     format : str, optional
-        file format of the generated plots, by default 'png'
+        The file format of the generated plots. Default is 'png'.
     save_fig : bool, optional
-        whether to save the figures to file, by default False
+        Whether to save the figures to file. Default is `False`.
+
+    Returns
+    -------
+    None
     """
 
     env = ContainerEnv.from_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../containergym/configs/" + config_file))
@@ -188,9 +199,32 @@ def run_trained_agent(log_dir, config_file='1container_1press.json', overwrite_e
 
 def average_cumulative_reward(log_dir, config_file='1container_1press.json', overwrite_episode_length=False,
                               overwrite_timestep=False, algorithm='ppo', n_rollouts=15, deterministic_policy=True):
-    """Performs n_rollouts rollouts of a policy and prints the average cumulative reward and the standard deviation.
     """
+    Perform n_rollouts rollouts of a policy and print the average cumulative reward and the standard deviation.
 
+    Parameters
+    ----------
+    log_dir : str
+        The directory containing the trained model.
+    config_file : str, optional
+        The name of the configuration file to use, by default '1container_1press.json'.
+    overwrite_episode_length : int, optional
+        If provided, the maximum episode length of the environment will be set to this value, by default False.
+    overwrite_timestep : int, optional
+        If provided, the timestep size of the environment will be set to this value, by default False.
+    algorithm : str, optional
+        The type of reinforcement learning algorithm used for training the model (ppo, trpo, or dqn), by default 'ppo'.
+    n_rollouts : int, optional
+        The number of rollouts to perform, by default 15.
+    deterministic_policy : bool, optional
+        Whether to use the deterministic policy or not, by default True.
+
+    Returns
+    -------
+    None
+        The function prints the average cumulative reward and the standard deviation of the rollouts.
+
+    """
     env = ContainerEnv.from_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../containergym/configs/" + config_file))
     if overwrite_episode_length:
         env.max_episode_length = overwrite_episode_length
@@ -230,10 +264,36 @@ def average_cumulative_reward(log_dir, config_file='1container_1press.json', ove
 def emptying_volumes_ecdfs(log_dirs, config_file='1container_1press.json', overwrite_episode_length=None,
                            overwrite_timestep=None, n_rollouts=15, deterministic_policy=True, fig_name='',
                            format='png'):
-    """Performs n_rollouts rollouts of a policy and plots the ECDF of the emptying volumes collected over all rollouts
-    for PPO, TRPO and DQN agents passed as a list in log_dirs.
-    
-    Caveat: assumes log_dirs contains paths to 3 models, namely PPO, TRPO and DQN in that order.
+    """
+    Performs n_rollouts rollouts of a policy and plots the empirical cumulative distribution function (ECDF) of the
+    emptying volumes collected over all rollouts for PPO, TRPO, and DQN agents passed as a list in log_dirs.
+
+    Parameters
+    ----------
+    log_dirs : List[str]
+        List of three paths to the saved models for PPO, TRPO, and DQN agents respectively.
+    config_file : str, optional
+        Path to the JSON configuration file for the container environment (default is '1container_1press.json').
+    overwrite_episode_length : int, optional
+        If provided, overrides the maximum episode length in the environment.
+    overwrite_timestep : float, optional
+        If provided, overrides the timestep in the environment.
+    n_rollouts : int, optional
+        Number of rollouts to perform for each agent (default is 15).
+    deterministic_policy : bool, optional
+        If True, the policy is deterministic; otherwise, it is stochastic (default is True).
+    fig_name : str, optional
+        Name to give the generated plot file (default is an empty string).
+    format : str, optional
+        Format to save the generated plot file (default is 'png').
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    This function assumes that log_dirs contains paths to 3 models, namely PPO, TRPO, and DQN in that order.
     """
     env = ContainerEnv.from_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../containergym/configs/" + config_file))
     if overwrite_episode_length:
@@ -318,8 +378,31 @@ def emptying_volumes_ecdfs(log_dirs, config_file='1container_1press.json', overw
 
 def plot_ecdf(model, config_file='1container_1press.json', overwrite_episode_length=False,
               overwrite_timestep=False, n_rollouts=15, deterministic_policy=True, fig_name='', format='png'):
-    """Performs n_rollouts rollouts of a policy and plots the ECDF of the emptying volumes collected over all rollouts
-    for a trained model.
+    """
+    Plot empirical cumulative distribution function (ECDF) of emptying volumes for a given trained model.
+
+    Parameters:
+    -----------
+    model : object
+        Trained machine learning model to use for predicting actions in the environment.
+    config_file : str, optional
+        Path to the JSON configuration file containing environment settings. Default is '1container_1press.json'.
+    overwrite_episode_length : int or bool, optional
+        If not False, overwrite the maximum episode length defined in the configuration file. Default is False.
+    overwrite_timestep : float or bool, optional
+        If not False, overwrite the timestep defined in the configuration file. Default is False.
+    n_rollouts : int, optional
+        Number of rollouts to perform. Default is 15.
+    deterministic_policy : bool, optional
+        Whether to use a deterministic policy for predicting actions. Default is True.
+    fig_name : str, optional
+        Name of the file to save the resulting plot. If empty, the plot is not saved. Default is an empty string.
+    format : str, optional
+        Format of the saved figure. Default is 'png'.
+
+    Returns:
+    --------
+    None
     """
 
     env = ContainerEnv.from_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../experiments/configs/" + config_file))
@@ -398,9 +481,18 @@ def plot_ecdf(model, config_file='1container_1press.json', overwrite_episode_len
 
 
 def get_color_code():
-    """Dummy function to avoid defining color code in different places.
-    The user should make sure to define a color for each container contained in the environment.
     """
+    Returns a dictionary containing color codes for each container in the environment.
+
+    Returns:
+    ----------
+    color_code : dict
+        A dictionary containing color codes for each container in the environment. Keys are container names and values are color codes represented as hexadecimal strings.
+
+    Note: The user should make sure to define a color for each container contained in the environment.
+
+    """
+
     color_code = {"C1-10": "#872657",  # raspberry
                   "C1-20": "#0000FF",  # blue
                   "C1-30": "#FFA500",  # orange
@@ -421,6 +513,16 @@ def get_color_code():
     return color_code
 
 def main():
+    """
+    Runs the main function of the script which performs the following tasks:
+
+    1. Finds all zip files containing logs in the specified directory and subdirectories.
+    2. Extracts run and config information from each path.
+    3. Averages cumulative rewards over 15 rollouts.
+    4. Creates plots for volume, action, and reward over a single episode.
+    5. Creates an empirical cumulative distribution function (ECDF) plot for emptying volumes.
+    6. Runs a rule-based agent for specified configurations.
+    """
     fig_format = 'svg'
     paths = glob.glob("./logs_best_seeds/**/*.zip", recursive=True)
     print("Found logs:")

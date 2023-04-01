@@ -20,18 +20,29 @@ from rule_based_agent import RuleBasedAgent
 
 def episodic_reward(log_dir, config_file='1container_1press.json', overwrite_episode_length=False,
                     overwrite_timestep=False, algorithm='ppo', deterministic_policy=True, n_rollouts=15):
-    """Returns a list of episodic rewards collected over n_rollouts of the agent in log_dir.
 
-    Parameters
-    ----------
-    log_dir : str
+    """
+    Returns a list of episodic rewards collected over n_rollouts of the agent in log_dir.
+
+    Parameters:
+    -----------
+    log_dir: str
         log directory in which the agent was saved
-    config_file : str, optional
+    config_file: str, optional
         name of the config file used for the environment, by default '1container_1press.json'
-    overwrite_episode_length : int, optional
+    overwrite_episode_length: int, optional
         if a different episode length is desired in inference, set that length here
-    deterministic_policy : bool, optional
+    deterministic_policy: bool, optional
         whether to sample from deterministic policy, by default True
+    algorithm: str, optional
+        the RL algorithm used, can be 'ppo', 'trpo', 'dqn', or 'rulebased', by default 'ppo'
+    n_rollouts: int, optional
+        the number of rollouts to evaluate, by default 15
+
+    Returns:
+    --------
+    rewards: list
+        a list of rewards collected during each rollout
     """
 
     env = ContainerEnv.from_json(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../containergym/configs/" + config_file))
@@ -70,7 +81,24 @@ def episodic_reward(log_dir, config_file='1container_1press.json', overwrite_epi
 
 
 def plot_ecdf_rewards(dict_rewards, fig_name='', format='png'):
-    """Plots ECDFs of episodic rewards passed as dictionary, where the key corresponds to an algorithm name.
+    """
+    Plots ECDFs of episodic rewards passed as dictionary, where the key corresponds to an algorithm name.
+
+    Plots empirical cumulative distribution functions (ECDFs) of episodic rewards for different algorithms.
+
+    Parameters
+    ----------
+    dict_rewards : dict
+        Dictionary of episodic rewards where the keys are algorithm names.
+    fig_name : str, optional
+        Name of the output file. Default is ''.
+    format : str, optional
+        Format of the output file. Default is 'png'.
+
+    Returns
+    -------
+    None
+
     """
 
     # Plot reward ECDFs
@@ -94,7 +122,14 @@ def plot_ecdf_rewards(dict_rewards, fig_name='', format='png'):
 
 
 def main():
-    # Reward ECDFs for PPO, TRPO and DQN
+    """
+    Runs the main experiment by computing the episodic rewards for PPO, TRPO, DQN and rule-based controller,
+    and then plotting their reward ECDFs.
+
+    Returns:
+    --------
+    None
+    """
     fig_format = 'svg'
     paths = ["./logs_best_seeds/ppo_11containers_11presses_5_seed_3_budget_5000000_ent-coef_0.0_gamma_0.99_steps_6144",
              "./logs_best_seeds/trpo_11containers_11presses_5_seed_4_budget_5000000_gamma_0.99_steps_6144",

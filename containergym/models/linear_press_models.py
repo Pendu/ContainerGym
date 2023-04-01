@@ -10,6 +10,39 @@ where i is the index of the requested press.
 
 
 class PressModel:
+    """
+    A class that models press behavior based on container and pressing parameters.
+
+    Parameters
+    ----------
+    enabled_containers : list or None
+        List of containers that are connected to a press. If None, no containers are connected.
+
+    slopes : dict or list or np.ndarray, optional
+        Dictionary, list, or numpy array with the slopes for each press. If a dictionary is provided,
+        it must have a key for each container that is connected to a press. If a list or array is provided,
+        it must have length n_containers, even if a press is not connected to a container. In that case,
+        set that corresponding container's value to None.
+
+    offsets : dict or list or np.ndarray, optional
+        Dictionary, list, or numpy array with the offsets for each press. If a dictionary is provided,
+        it must have a key for each container that is connected to a press. If a list or array is provided,
+        it must have length n_containers, even if a press is not connected to a container. In that case,
+        set that corresponding container's value to None.
+
+    Attributes
+    ----------
+    slopes : np.ndarray
+        Array with the slopes for each press.
+
+    offsets : np.ndarray
+        Array with the offsets for each press.
+
+    Methods
+    -------
+    get_pressing_time(current_time, time_prev_pressing_done, container_idx, n_bales)
+        Calculate how long it takes until press is free.
+    """
     def __init__(
         self,
         enabled_containers: Optional[list],
@@ -42,25 +75,25 @@ class PressModel:
         self, current_time, time_prev_pressing_done, container_idx, n_bales
     ):
         """
-        Calculate how long it takes until press 1 is free.
+        Calculate how long it takes until press is free.
 
         Parameters
         ----------
-        current_time: float
-            the current time since the start of the simulation
+        current_time : float
+            The current time since the start of the simulation.
 
-        time_prev_pressing_done: float
-            the time at which the last pressing process finished
+        time_prev_pressing_done : float
+            The time at which the last pressing process finished.
 
-        container_idx: int
-            index of the container that will be emptied
+        container_idx : int
+            The index of the container that will be emptied.
 
-        n_bales: int
-            how many bales will be pressed
+        n_bales : int
+            How many bales will be pressed.
 
         Returns
         -------
-        float
+        float or None
             Time in seconds until pressing will be finished. None if press is not free.
         """
         if current_time > time_prev_pressing_done or not self.slopes[container_idx]:

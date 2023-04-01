@@ -5,6 +5,45 @@ import numpy as np
 
 
 class RewardEvaluator:
+    """
+    A class to evaluate the reward of a given action in the RL environment.
+
+    Parameters
+    ----------
+    container_params : Union[dict, list]
+        The parameters for the Gaussian reward function. Can be either a dictionary with keys
+        'peaks', 'heights', and 'widths', or a list of tuples where each tuple contains the peak,
+        height, and width values.
+    min_reward : float
+        The minimum reward value.
+
+    Methods
+    -------
+    from_json(filename)
+        Returns a RewardEvaluator object with parameters loaded from a JSON file.
+
+    gaussian_reward_dict_params(action, current_volume, press_is_free, container_id)
+        Calculates the reward for an action given the current container volume and whether the
+        press is free or not. Uses the parameters in container_params (dictionary form).
+
+    gaussian_reward_list_params(action, current_volume, press_is_free, container_id=None)
+        Calculates the reward for an action given the current container volume and whether the
+        press is free or not. Uses the parameters in container_params (list form).
+
+    reward(action, current_volume, press_is_free, container_id)
+        Calculates the reward for an action given the current container volume and whether the
+        press is free or not. Depending on the type of container_params, calls either the
+        gaussian_reward_dict_params or gaussian_reward_list_params function.
+
+    Attributes
+    ----------
+    container_params : Union[dict, list]
+        The parameters for the Gaussian reward function.
+    min_reward : float
+        The minimum reward value.
+    n_containers : int
+        The number of containers in the environment.
+    """
     def __init__(self, container_params: Union[dict, list], min_reward: float):
         # "overloading" constructor to allow params in dict or list form
         # if type(container_params) == dict:
@@ -17,6 +56,19 @@ class RewardEvaluator:
 
     @classmethod
     def from_json(cls, filename):
+        """
+        Returns a RewardEvaluator object with parameters loaded from a JSON file.
+
+        Parameters
+        ----------
+        filename : str
+            The name of the JSON file containing the reward parameters.
+
+        Returns
+        -------
+        RewardEvaluator
+            A RewardEvaluator object with parameters loaded from the JSON file.
+        """
         with open(filename) as json_file:
             data = json.load(json_file)
 
@@ -27,7 +79,27 @@ class RewardEvaluator:
 
     def gaussian_reward_dict_params(
         self, action, current_volume, press_is_free, container_id
-    ):  # TODO: Remove
+    ):
+        """
+        Calculates the reward for an action given the current container volume and whether the
+        press is free or not. Uses the parameters in container_params (dictionary form).
+
+        Parameters
+        ----------
+        action : int
+            The action taken by the agent at time t.
+        current_volume : float
+            The volume of the container on which the action is performed at time t.
+        press_is_free : bool
+            True if the press is free (emptying is possible) at time t. False otherwise.
+        container_id : int
+            The ID of the container on which the action is performed.
+
+        Returns
+        -------
+        float
+            A value between min_reward and 1, representing the reward for the given action.
+        """
         reward = 0
 
         if action > 0:
@@ -53,6 +125,30 @@ class RewardEvaluator:
     def gaussian_reward_list_params(
         self, action, current_volume, press_is_free, container_id=None
     ):
+        """
+        Calculate reward based on a Gaussian function for a list of container parameters.
+
+        Parameters
+        ----------
+        action : int
+            The action taken by the agent at time t.
+        current_volume : float
+            The volume of the container at time t.
+        press_is_free : bool
+            True if the press is free (emptying is possible) at time t. False otherwise.
+        container_id : int or None, optional
+            The ID of the container on which the action is performed. Default is None.
+
+        Returns
+        -------
+        float
+            A value between min_reward and 1.
+
+        Notes
+        -----
+        The Gaussian function is defined by the parameters of the container, which are stored in self.container_params.
+
+        """
         reward = 0
 
         if action > 0:
@@ -78,14 +174,28 @@ class RewardEvaluator:
 
     def reward(self, action, current_volume, press_is_free, container_id):
         """
-        The reward function is a Gaussian function. Depending on container_id, calls corresponding Gaussian reward function.
-        The reward is 1 if the action taken by the agent leads to an empty container, and min_reward otherwise.
+        Calculate reward based on a Gaussian function for a container.
 
-        :param action: Action taken by the agent at time t
-        :param current_volume: container volume at time t
-        :param press_is_free: True if press is free (emptying is possible) at time t. False otherwise
-        :param container_id: ID of container on which the action is performed
-        :return: A value between min_reward and 1
+        Parameters
+        ----------
+        action : int
+            The action taken by the agent at time t.
+        current_volume : float
+            The volume of the container at time t.
+        press_is_free : bool
+            True if the press is free (emptying is possible) at time t. False otherwise.
+        container_id : int
+            The ID of the container on which the action is performed.
+
+        Returns
+        -------
+        float
+            A value between min_reward and 1.
+
+        Notes
+        -----
+        The Gaussian function is defined by the parameters of the container with the given ID, which are stored in self.container_params.
+
         """
 
         return self.gaussian_reward_dict_params(

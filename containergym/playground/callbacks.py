@@ -12,10 +12,13 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
     Callback for saving a model (the check is done every ``check_freq`` steps)
     based on the training reward (in practice, we recommend using ``EvalCallback``).
 
-    :param check_freq: (int)
-    :param log_dir: (str) Path to the folder where the model will be saved.
-      It must contains the file created by the ``Monitor`` wrapper.
-    :param verbose: (int)
+    :param check_freq: int
+        Frequency at which to check for the best model.
+    :param log_dir: str
+        Path to the folder where the model will be saved. It must contain the file created by the ``Monitor`` wrapper.
+    :param verbose: int
+        Verbosity level.
+
     """
 
     def __init__(self, check_freq: int, log_dir: str, verbose=1):
@@ -26,13 +29,15 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
         self.best_mean_reward = -np.inf
 
     def _init_callback(self) -> None:
-        """This method is called before the first rollout starts."""
-        # Create folder if needed
+        """
+        Initialize the callback.
+        This method is called before the first rollout starts.
+        """
         if self.save_path is not None:
             os.makedirs(self.save_path, exist_ok=True)
 
     def _on_step(self) -> bool:
-        """"
+        """
         This method will be called by the model after each call to `env.step()`.
         """
         if self.n_calls % self.check_freq == 0:
@@ -75,8 +80,12 @@ class ProgressBarCallback(BaseCallback):
 
 # This callback uses the 'with' block, allowing for correct initialisation and destruction
 class ProgressBarManager(object):
-    """"
-    :param total_timesteps: (int) Total number of timesteps
+    """
+    Context manager for displaying a progress bar.
+
+    :param total_timesteps: int
+        Total number of timesteps.
+
     """
     def __init__(self, total_timesteps):  # init object with total timesteps
         self.pbar = None

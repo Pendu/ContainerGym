@@ -22,11 +22,13 @@ torch.set_num_threads(1)
 
 
 def parse_args():
-
     """
-    The parse_args function is used to parse the command line arguments.
+    Parse command line arguments using argparse.
 
-    :return: A namespace object that contains the arguments passed to the script
+    Returns:
+    --------
+    argparse.Namespace:
+        An argparse object containing all of the added arguments. A namespace object
     """
     parser = argparse.ArgumentParser()
 
@@ -92,46 +94,98 @@ def parse_args():
     return args
 
 class rulebased_agent():
-        def __init__(self):
-            self.peak_rew_vols = {"C1-10": [19.84],
-                                  "C1-20": [26.75],
-                                  "C1-30": [8.84, 17.70, 26.56],
-                                  "C1-40": [8.40, 16.80, 25.19],
-                                  "C1-50": [4.51, 9.02, 13.53],
-                                  "C1-60": [7.19, 14.38, 21.57],
-                                  "C1-70": [8.65, 17.31, 25.96],
-                                  "C1-80": [12.37, 24.74],
-                                  "C2-10": [27.39],
-                                  "C2-20": [37.04],
-                                  "C2-40": [8.58, 17.17, 25.77],
-                                  "C2-50": [4.60, 9.21, 13.82],
-                                  "C2-60": [8.58, 17.17, 25.77],
-                                  "C2-70": [13.22, 26.46],
-                                  "C2-80": [28.75],
-                                  "C2-90": [5.76, 11.50, 17.26]}
+    """
+    A rule-based agent for predicting actions based on observations.
 
-        def predict(self, obs=None, env_s=None, peak_vols=None):
-            clash_counter = 0
-            for i in range(env_s.n_containers):
-                if peak_vols[i] - 1 < obs[i] < peak_vols[i] + 1:
-                    action = i + 1
-                    clash_counter += 1
-                elif obs[i] > peak_vols[i] + 1:
-                    action = i + 1
-                    clash_counter += 1
-                elif not clash_counter:
-                    action = 0
-            return action
+    Attributes:
+    -----------
+    peak_rew_vols : dict
+        A dictionary mapping container names to a list of their peak reward volumes.
+    """
+    def __init__(self):
+        """
+        Initializes the rule-based agent with a dictionary mapping container names
+        to their corresponding peak reward volumes.
+        """
+        self.peak_rew_vols = {"C1-10": [19.84],
+                              "C1-20": [26.75],
+                              "C1-30": [8.84, 17.70, 26.56],
+                              "C1-40": [8.40, 16.80, 25.19],
+                              "C1-50": [4.51, 9.02, 13.53],
+                              "C1-60": [7.19, 14.38, 21.57],
+                              "C1-70": [8.65, 17.31, 25.96],
+                              "C1-80": [12.37, 24.74],
+                              "C2-10": [27.39],
+                              "C2-20": [37.04],
+                              "C2-40": [8.58, 17.17, 25.77],
+                              "C2-50": [4.60, 9.21, 13.82],
+                              "C2-60": [8.58, 17.17, 25.77],
+                              "C2-70": [13.22, 26.46],
+                              "C2-80": [28.75],
+                              "C2-90": [5.76, 11.50, 17.26]}
 
-        def set_env(self, env_s=None):
-            peak_vols = []
-            for i in range(env_s.n_containers):
-                print(env_s.enabled_containers[i])
-                peak_vols.append(self.peak_rew_vols[env_s.enabled_containers[i]][-1])
-            return peak_vols
+    def predict(self, obs=None, env_s=None, peak_vols=None):
+        """
+        Predicts an action based on the current observation and peak volumes of containers.
+
+        Parameters:
+        -----------
+        obs : list, optional
+            A list of current observations of container volumes.
+        env_s : object, optional
+            An object containing information about the current environment state.
+        peak_vols : list, optional
+            A list of peak volumes of containers.
+
+        Returns:
+        --------
+        int
+            An integer representing the predicted action.
+        """
+        clash_counter = 0
+        for i in range(env_s.n_containers):
+            if peak_vols[i] - 1 < obs[i] < peak_vols[i] + 1:
+                action = i + 1
+                clash_counter += 1
+            elif obs[i] > peak_vols[i] + 1:
+                action = i + 1
+                clash_counter += 1
+            elif not clash_counter:
+                action = 0
+        return action
+
+    def set_env(self, env_s=None):
+        """
+        Sets the peak volumes of the containers in the current environment.
+
+        Parameters:
+        -----------
+        env_s : object, optional
+            An object containing information about the current environment state.
+
+        Returns:
+        --------
+        list
+            A list of peak volumes of containers.
+        """
+        peak_vols = []
+        for i in range(env_s.n_containers):
+            print(env_s.enabled_containers[i])
+            peak_vols.append(self.peak_rew_vols[env_s.enabled_containers[i]][-1])
+        return peak_vols
 
 def get_color_code():
-    """Dummy function to avoid defining color code in different places.
+    """
+    Returns a dictionary with color codes for each container in the environment.
+
+    Returns
+    -------
+    dict
+        A dictionary with keys corresponding to container names and values corresponding to color codes in
+        hexadecimal format.
+
+    Notes
+    -----
     The user should make sure to define a color for each container contained in the environment.
     """
     color_code = {"C1-10": "#872657",  # raspberry
@@ -155,11 +209,19 @@ def get_color_code():
 
 def inference(seed, args):
     """
-    The inference function is used to evaluate a trained agent and create plots of its performance.
+    Evaluate a trained agent and create plots of its performance.
 
-    :param seed: Set the seed for the random number generator
-    :param args: Pass arguments to the script
-    :return: None
+    Parameters
+    ----------
+    seed : int
+        The seed for the random number generator.
+    args : argparse.Namespace
+        Arguments passed to the script.
+
+    Returns
+    -------
+    None
+
     """
 
 
@@ -366,7 +428,14 @@ def inference(seed, args):
 
 
 if __name__ == "__main__":
-    # get the arguments
+    """
+    
+    This is the main function of the script. It gets the arguments and starts multiple processes, each
+    running the inference function with a different random seed.
+
+    :return: None
+    
+    """
     args = parse_args()
 
     seeds = range(1, args.n_seeds+1)

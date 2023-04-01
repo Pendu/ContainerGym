@@ -172,13 +172,21 @@ class ContainerEnv(gym.Env):
     @classmethod
     def from_json(cls, filepath):
         """
-        The from_json function is a class method that takes in the filepath to a JSON
-        file and returns an instance of the ContainerEnv class.
+        Constructs a ContainerEnv object from a JSON file.
 
-        :param cls: Pass the class of the object that is being created
-        :param filepath: Specify the filepath of the json file to be read
-        :return: An object of the class 'ContainerEnv'
+        Parameters
+        ----------
+        cls : type
+            The class of the object being created.
+        filepath : str
+            The filepath of the JSON file to be read.
+
+        Returns
+        -------
+        ContainerEnv
+            An object of the class 'ContainerEnv'.
         """
+
         with open(filepath, "r") as f:
             data = json.load(f)
             obj = cls(
@@ -204,11 +212,29 @@ class ContainerEnv(gym.Env):
             return obj
 
     def step(self, action):
-        """Perform a single step in the environment.
-        :param action: The action to be performed
-        :type action: int
-        :return: The observation, reward, done, and info
-        :rtype: tuple
+        """
+        Perform a single step in the environment.
+
+        Parameters
+        ----------
+        action : int
+            The action to be performed.
+
+        Returns
+        -------
+        tuple
+            A tuple of the observation, reward, done flag, and info dictionary.
+
+
+        Notes
+        -----
+        This method updates the environment state according to the specified `action`, and returns the resulting observation,
+        reward, and done flag, as well as additional information in the `info` dictionary. If `action` is 0, the method does
+        nothing and returns the current observation and zero reward. Otherwise, it selects a container to be emptied based on
+        the value of `action`, and uses a free press to compress the material in the container. The reward is calculated based on
+        whether the emptying was successful, the amount of material that was emptied, and the current state of the press. The
+        episode is terminated if any container exceeds its maximum volume or the maximum episode length is reached.
+
         """
 
         press_is_free = False  # Used to calculate reward at the end of the step
@@ -298,17 +324,33 @@ class ContainerEnv(gym.Env):
         return obs, current_reward, done, info
 
     def reset(self):
-        # Reset state
+        """
+        Resets the environment to its initial state.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the initial observation of the environment.
+        """
         self.state = State(self.n_containers, self.n_presses)
         self.state.reset(self.min_starting_volume, self.max_starting_volume)
         return self.state.to_dict()
 
 
     def render(self, y_volumes=None):
-        # Plotting live volumes of containers during evaluation
         """
-        :param y_volumes: input volumes
-        :return: None
+        Plot the live volumes of containers during evaluation.
+
+        Parameters
+        ----------
+        y_volumes : array-like or None, shape (n_steps, n_containers), optional
+            The input volumes of each container for each time step. If not provided, the current state
+            volumes will be used instead.
+
+        Returns
+        -------
+        None
+
         """
 
         for i in range(self.n_containers):
@@ -324,10 +366,45 @@ class ContainerEnv(gym.Env):
 
 
 class State:
+    """
+    A class representing the state of the Presses environment.
+
+    Parameters
+    ----------
+    enabled_containers : list or int
+        List of enabled containers or number of enabled containers
+    n_presses : int
+        Number of presses
+
+    Attributes
+    ----------
+    episode_length : int
+        Length of the current episode
+    volumes : numpy.ndarray
+        Volumes of each container
+    press_times : numpy.ndarray
+        Press times for each press
+
+    Methods
+    -------
+    reset(min_volumes, max_volumes)
+        Reset volumes to random values between min_volumes and max_volumes
+    to_dict()
+        Convert the class into a dictionary
+    to_box()
+        Convert the class into a box-vector
+
+    """
     def __init__(self, enabled_containers, n_presses):
         """"
-        :param enabled_containers: list of enabled containers
-        :param n_presses: number of presses
+        Initializes the State object.
+
+        Parameters
+        ----------
+        enabled_containers : list or int
+            List of enabled containers or number of enabled containers
+        n_presses : int
+            Number of presses
         """
         self.episode_length = 0
         if type(enabled_containers) == list:
@@ -339,10 +416,15 @@ class State:
         self.press_times = np.zeros(n_presses)
 
     def reset(self, min_volumes, max_volumes):
-        # Reset volumes to random values between min_volumes and max_volumes
-        """"
-        :param min_volumes: minimum volume of each container
-        :param max_volumes: maximum volume of each container
+        """
+        Resets the volumes of each container to random values within the given range.
+
+        Parameters
+        ----------
+        min_volumes : float
+            Minimum volume of each container
+        max_volumes : float
+            Maximum volume of each container
         """
         self.volumes = np.random.uniform(
             min_volumes, max_volumes, size=len(self.volumes)
@@ -350,16 +432,22 @@ class State:
 
     def to_dict(self):
         """
-        The to_dict function is used to convert the class into a dictionary. This is necessary for the gym environment to work.
-        :param self: Refer to the object itself
-        :return: A dictionary with the volumes and press times
+        Converts the class into a dictionary.
+
+        Returns
+        -------
+        dict
+            A dictionary with the volumes and press times
         """
         return {"Volumes": self.volumes, "Time presses will be free": self.press_times}
     
     def to_box(self):
         """
-        The to_box function is used to convert the class into a box. This is necessary for the gym environment to work.
-        :param self: Refer to the object itself
-        :return: A box-vector with the volumes and press times
+        Converts the class into a box-vector.
+
+        Returns
+        -------
+        numpy.ndarray
+            A box-vector with the volumes and press times
         """
         return np.concatenate(self.volumes, self.press_times)

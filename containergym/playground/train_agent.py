@@ -15,7 +15,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.monitor import Monitor
 
 from containergym.env import ContainerEnv
-from containergym.experiments.callbacks import *
+from containergym.playground.callbacks import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 torch.set_num_threads(1)
@@ -23,11 +23,12 @@ torch.set_num_threads(1)
 
 def parse_args():
     """
-    The parse_args function is used to parse the command line arguments.
-        It takes no arguments and returns an argparse object containing all of the
-        added arguments.
+    Parse command line arguments using argparse.
 
-    :return: A namespace object
+    Returns:
+    --------
+    argparse.Namespace:
+        An argparse object containing all of the added arguments. A namespace object
     """
     parser = argparse.ArgumentParser()
 
@@ -81,15 +82,21 @@ def parse_args():
 
 def train(seed, args):
     """
-    The train function is the main function of this script.
-    It trains an agent on the benchmark environment.
+    The train function is the main function of this script. It trains an agent on
+    the benchmark environment.
 
+    Parameters
+    ----------
+    seed : int
+        The seed to initialize the random number generator.
+    args : argparse.Namespace
+        The parsed arguments from the command line.
 
-    :param seed: Initialize the random number generator
-    :param args: Pass arguments to the script
-    :return: None
+    Returns
+    -------
+    None
+
     """
-
 
     config_file = args.config_file
     budget = args.budget
@@ -190,7 +197,12 @@ def train(seed, args):
 
 
 if __name__ == "__main__":
-    # get the arguments
+    """
+    This is the main function of the script. It gets the arguments and starts multiple processes, each
+    running the train function with a different random seed.
+
+    :return: None
+    """
     args = parse_args()
 
     seeds = range(1, args.n_seeds + 1)
