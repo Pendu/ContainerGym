@@ -106,31 +106,31 @@ def train(seed, args):
 
     if args.RL_agent in ["PPO", "A2C", "TRPO"]:
         name = (
-                f"{args.RL_agent}_"
-                + config_file.replace(".json", "")
-                + "_seed_"
-                + str(seed)
-                + "_budget_"
-                + str(budget)
-                + "_ent-coef_"
-                + str(ent_coef)
-                + "_gamma_"
-                + str(gamma)
-                + "_n_steps_"
-                + str(n_steps)
+            f"{args.RL_agent}_"
+            + config_file.replace(".json", "")
+            + "_seed_"
+            + str(seed)
+            + "_budget_"
+            + str(budget)
+            + "_ent-coef_"
+            + str(ent_coef)
+            + "_gamma_"
+            + str(gamma)
+            + "_n_steps_"
+            + str(n_steps)
         )
     else:
         name = (
-                f"{args.RL_agent}_"
-                + config_file.replace(".json", "")
-                + "_seed_"
-                + str(seed)
-                + "_budget_"
-                + str(budget)
-                + "_ent-coef_"
-                + str(ent_coef)
-                + "_gamma_"
-                + str(gamma)
+            f"{args.RL_agent}_"
+            + config_file.replace(".json", "")
+            + "_seed_"
+            + str(seed)
+            + "_budget_"
+            + str(budget)
+            + "_ent-coef_"
+            + str(ent_coef)
+            + "_gamma_"
+            + str(gamma)
         )
 
     log_dir = os.path.dirname(os.path.abspath(__file__)) + "/logs/" + name + "/"
@@ -140,7 +140,8 @@ def train(seed, args):
     env = ContainerEnv.from_json(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "../configs/" + config_file
-        ))
+        )
+    )
     env = Monitor(env, log_dir)
 
     # Create the callback: check every 1000 steps

@@ -44,6 +44,7 @@ class RewardEvaluator:
     n_containers : int
         The number of containers in the environment.
     """
+
     def __init__(self, container_params: Union[dict, list], min_reward: float):
         # "overloading" constructor to allow params in dict or list form
         # if type(container_params) == dict:
@@ -200,4 +201,4 @@ class RewardEvaluator:
 
         return self.gaussian_reward_dict_params(
             action, current_volume, press_is_free, container_id
-)
+        )

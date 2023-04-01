@@ -43,6 +43,7 @@ class PressModel:
     get_pressing_time(current_time, time_prev_pressing_done, container_idx, n_bales)
         Calculate how long it takes until press is free.
     """
+
     def __init__(
         self,
         enabled_containers: Optional[list],
@@ -100,5 +101,7 @@ class PressModel:
             # Press is not free or container not compatible with this press
             return None
         return (
-            current_time + self.slopes[container_idx] * n_bales + self.offsets[container_idx]
+            current_time
+            + self.slopes[container_idx] * n_bales
+            + self.offsets[container_idx]
         )

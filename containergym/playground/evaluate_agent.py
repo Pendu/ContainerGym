@@ -93,7 +93,8 @@ def parse_args():
 
     return args
 
-class rulebased_agent():
+
+class rulebased_agent:
     """
     A rule-based agent for predicting actions based on observations.
 
@@ -102,27 +103,30 @@ class rulebased_agent():
     peak_rew_vols : dict
         A dictionary mapping container names to a list of their peak reward volumes.
     """
+
     def __init__(self):
         """
         Initializes the rule-based agent with a dictionary mapping container names
         to their corresponding peak reward volumes.
         """
-        self.peak_rew_vols = {"C1-10": [19.84],
-                              "C1-20": [26.75],
-                              "C1-30": [8.84, 17.70, 26.56],
-                              "C1-40": [8.40, 16.80, 25.19],
-                              "C1-50": [4.51, 9.02, 13.53],
-                              "C1-60": [7.19, 14.38, 21.57],
-                              "C1-70": [8.65, 17.31, 25.96],
-                              "C1-80": [12.37, 24.74],
-                              "C2-10": [27.39],
-                              "C2-20": [37.04],
-                              "C2-40": [8.58, 17.17, 25.77],
-                              "C2-50": [4.60, 9.21, 13.82],
-                              "C2-60": [8.58, 17.17, 25.77],
-                              "C2-70": [13.22, 26.46],
-                              "C2-80": [28.75],
-                              "C2-90": [5.76, 11.50, 17.26]}
+        self.peak_rew_vols = {
+            "C1-10": [19.84],
+            "C1-20": [26.75],
+            "C1-30": [8.84, 17.70, 26.56],
+            "C1-40": [8.40, 16.80, 25.19],
+            "C1-50": [4.51, 9.02, 13.53],
+            "C1-60": [7.19, 14.38, 21.57],
+            "C1-70": [8.65, 17.31, 25.96],
+            "C1-80": [12.37, 24.74],
+            "C2-10": [27.39],
+            "C2-20": [37.04],
+            "C2-40": [8.58, 17.17, 25.77],
+            "C2-50": [4.60, 9.21, 13.82],
+            "C2-60": [8.58, 17.17, 25.77],
+            "C2-70": [13.22, 26.46],
+            "C2-80": [28.75],
+            "C2-90": [5.76, 11.50, 17.26],
+        }
 
     def predict(self, obs=None, env_s=None, peak_vols=None):
         """
@@ -174,6 +178,7 @@ class rulebased_agent():
             peak_vols.append(self.peak_rew_vols[env_s.enabled_containers[i]][-1])
         return peak_vols
 
+
 def get_color_code():
     """
     Returns a dictionary with color codes for each container in the environment.
@@ -188,24 +193,26 @@ def get_color_code():
     -----
     The user should make sure to define a color for each container contained in the environment.
     """
-    color_code = {"C1-10": "#872657",  # raspberry
-                  "C1-20": "#0000FF",  # blue
-                  "C1-30": "#FFA500",  # orange
-                  "C1-40": "#008000",  # green
-                  "C1-50": "#B0E0E6",  # powderblue
-                  "C1-60": "#FF00FF",  # fuchsia
-                  "C1-70": "#800080",  # purple
-                  "C1-80": "#FF4500",  # orangered
-                  "C2-10": "#DB7093",  # palevioletred
-                  "C2-20": "#FF8C69",  # salmon1
-                  "C2-40": "#27408B",  # royalblue4
-                  "C2-50": "#54FF9F",  # seagreen1
-                  "C2-60": "#FF3E96",  # violet
-                  "C2-70": "#FFD700",  # gold1
-                  "C2-80": "#7FFF00",  # chartreuse1
-                  "C2-90": "#D2691E",  # chocolate
-                  }
+    color_code = {
+        "C1-10": "#872657",  # raspberry
+        "C1-20": "#0000FF",  # blue
+        "C1-30": "#FFA500",  # orange
+        "C1-40": "#008000",  # green
+        "C1-50": "#B0E0E6",  # powderblue
+        "C1-60": "#FF00FF",  # fuchsia
+        "C1-70": "#800080",  # purple
+        "C1-80": "#FF4500",  # orangered
+        "C2-10": "#DB7093",  # palevioletred
+        "C2-20": "#FF8C69",  # salmon1
+        "C2-40": "#27408B",  # royalblue4
+        "C2-50": "#54FF9F",  # seagreen1
+        "C2-60": "#FF3E96",  # violet
+        "C2-70": "#FFD700",  # gold1
+        "C2-80": "#7FFF00",  # chartreuse1
+        "C2-90": "#D2691E",  # chocolate
+    }
     return color_code
+
 
 def inference(seed, args):
     """
@@ -224,7 +231,6 @@ def inference(seed, args):
 
     """
 
-
     save_fig = True
     n_steps = args.n_steps
     seed = seed
@@ -239,33 +245,32 @@ def inference(seed, args):
 
     if args.RL_agent in ["PPO", "A2C", "TRPO"]:
         run_name = (
-                f"{args.RL_agent}_"
-                + config_file.replace(".json", "")
-                + "_seed_"
-                + str(seed)
-                + "_budget_"
-                + str(budget)
-                + "_ent-coef_"
-                + str(ent_coef)
-                + "_gamma_"
-                + str(gamma)
-                + "_n_steps_"
-                + str(n_steps)
+            f"{args.RL_agent}_"
+            + config_file.replace(".json", "")
+            + "_seed_"
+            + str(seed)
+            + "_budget_"
+            + str(budget)
+            + "_ent-coef_"
+            + str(ent_coef)
+            + "_gamma_"
+            + str(gamma)
+            + "_n_steps_"
+            + str(n_steps)
         )
     else:
         run_name = (
-                f"{args.RL_agent}_"
-                + config_file.replace(".json", "")
-                + "_seed_"
-                + str(seed)
-                + "_budget_"
-                + str(budget)
-                + "_ent-coef_"
-                + str(ent_coef)
-                + "_gamma_"
-                + str(gamma)
+            f"{args.RL_agent}_"
+            + config_file.replace(".json", "")
+            + "_seed_"
+            + str(seed)
+            + "_budget_"
+            + str(budget)
+            + "_ent-coef_"
+            + str(ent_coef)
+            + "_gamma_"
+            + str(gamma)
         )
-
 
     fig_name = "run_trained_agent_deterministic_policy_" + run_name
 
@@ -284,7 +289,7 @@ def inference(seed, args):
     log_dir_results = os.path.dirname(os.path.abspath(__file__)) + "/results/"
     os.makedirs(log_dir_results, exist_ok=True)
 
-    #plt.savefig(log_dir_results + "train_reward_" + run_name + ".%s" % fig_format)
+    # plt.savefig(log_dir_results + "train_reward_" + run_name + ".%s" % fig_format)
 
     env = ContainerEnv.from_json(
         os.path.join(
@@ -309,7 +314,6 @@ def inference(seed, args):
         model = rulebased_agent()
         peak_vols = model.set_env(env)
 
-
     # Keep track of state variables (volumes), actions, and rewards
     volumes = []
     actions = []
@@ -322,7 +326,9 @@ def inference(seed, args):
     while True:
         episode_length += 1
         if args.RL_agent == "rulebased":
-            action = model.predict(env_s = env, obs = obs[env.n_presses:].copy(), peak_vols = peak_vols)
+            action = model.predict(
+                env_s=env, obs=obs[env.n_presses :].copy(), peak_vols=peak_vols
+            )
         else:
             action, _ = model.predict(obs, deterministic=deterministic_policy)
         actions.append(action)
@@ -424,21 +430,21 @@ def inference(seed, args):
             format=fig_format,
         )
 
-    #plt.show()
+    # plt.show()
 
 
 if __name__ == "__main__":
     """
-    
+
     This is the main function of the script. It gets the arguments and starts multiple processes, each
     running the inference function with a different random seed.
 
     :return: None
-    
+
     """
     args = parse_args()
 
-    seeds = range(1, args.n_seeds+1)
+    seeds = range(1, args.n_seeds + 1)
     processes = [Process(target=inference, args=(s, args)) for s in seeds]
 
     for p in processes:

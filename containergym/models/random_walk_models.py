@@ -27,6 +27,7 @@ class VectorizedRandomWalkModel:
     future_volume(volumes: np.array, timestep: int) -> np.array:
         Applies a random walk to all containers at once with a given timestep duration.
     """
+
     def __init__(self, mus, sigmas):
         self.mus = mus
         self.sigmas = sigmas

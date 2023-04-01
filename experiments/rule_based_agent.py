@@ -2,12 +2,17 @@ import json
 import numpy as np
 import os
 
+
 def main():
-    config_file = '5containers_2presses_2.json'
-    filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../containergym/configs/" + config_file)
+    config_file = "5containers_2presses_2.json"
+    filepath = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "../containergym/configs/" + config_file,
+    )
     my_rule_based_agent = RuleBasedAgent(filepath)
     print(my_rule_based_agent.enabled_containers)
     print(my_rule_based_agent.best_volumes)
+
 
 class RuleBasedAgent:
     """
@@ -37,20 +42,21 @@ class RuleBasedAgent:
         Predicts the next action of the agent based on the observation received.
 
     """
+
     def __init__(self, filepath, vol_margin=1):
         """
-          Initializes a new instance of the RuleBasedAgent.
+        Initializes a new instance of the RuleBasedAgent.
 
-          Parameters
-          ----------
-          filepath : str
-              The path to the JSON configuration file containing the reward parameters
-              and enabled containers.
-          vol_margin : int, optional
-              The minimum difference in volume for a container to be considered for selection, by default 1.
-          """
+        Parameters
+        ----------
+        filepath : str
+            The path to the JSON configuration file containing the reward parameters
+            and enabled containers.
+        vol_margin : int, optional
+            The minimum difference in volume for a container to be considered for selection, by default 1.
+        """
         self.vol_margin = vol_margin
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
             self.enabled_containers = data.get("ENABLED_CONTAINERS")
             reward_params = data.get("REWARD_PARAMS")

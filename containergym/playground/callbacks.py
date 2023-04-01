@@ -87,6 +87,7 @@ class ProgressBarManager(object):
         Total number of timesteps.
 
     """
+
     def __init__(self, total_timesteps):  # init object with total timesteps
         self.pbar = None
         self.total_timesteps = total_timesteps
@@ -100,6 +101,3 @@ class ProgressBarManager(object):
         self.pbar.n = self.total_timesteps
         self.pbar.update(0)
         self.pbar.close()
-
-
-

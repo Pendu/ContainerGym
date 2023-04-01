@@ -80,7 +80,7 @@ class ContainerEnv(gym.Env):
             "C1-20": {"peaks": [26.71], "heights": [1], "widths": [2]}
         },
         min_reward: float = -1e-1,
-        dict_observation: bool = True
+        dict_observation: bool = True,
     ):
         self.max_episode_length = max_episode_length
         self.enabled_containers = enabled_containers
@@ -90,7 +90,9 @@ class ContainerEnv(gym.Env):
         self.failure_penalty = failure_penalty
         self.timestep = timestep
         self.press_model = PressModel(
-            enabled_containers=enabled_containers, slopes=press_slopes, offsets=press_offsets
+            enabled_containers=enabled_containers,
+            slopes=press_slopes,
+            offsets=press_offsets,
         )
         self.reward_evaluator = RewardEvaluator(
             container_params=reward_params, min_reward=min_reward
@@ -153,12 +155,14 @@ class ContainerEnv(gym.Env):
         # Create action space based on how many containers exist
         self.action_space = spaces.Discrete(self.n_containers + 1)
 
-        # Create observation space 
+        # Create observation space
         self.dict_observation = dict_observation
         if dict_observation:
             self.observation_space = spaces.Dict(
                 {
-                    "Volumes": spaces.Box(low=-100, high=100, shape=(self.n_containers,)),
+                    "Volumes": spaces.Box(
+                        low=-100, high=100, shape=(self.n_containers,)
+                    ),
                     "Time presses will be free": spaces.Box(
                         low=0, high=np.inf, shape=(self.n_presses,)
                     ),
@@ -317,9 +321,9 @@ class ContainerEnv(gym.Env):
             done = True
 
         info = {"press_indices": press_idx}
-        if self.dict_observation: 
+        if self.dict_observation:
             obs = self.state.to_dict()
-        else: 
+        else:
             obs = self.state.to_box()
         return obs, current_reward, done, info
 
@@ -335,7 +339,6 @@ class ContainerEnv(gym.Env):
         self.state = State(self.n_containers, self.n_presses)
         self.state.reset(self.min_starting_volume, self.max_starting_volume)
         return self.state.to_dict()
-
 
     def render(self, y_volumes=None):
         """
@@ -395,8 +398,9 @@ class State:
         Convert the class into a box-vector
 
     """
+
     def __init__(self, enabled_containers, n_presses):
-        """"
+        """ "
         Initializes the State object.
 
         Parameters
@@ -440,7 +444,7 @@ class State:
             A dictionary with the volumes and press times
         """
         return {"Volumes": self.volumes, "Time presses will be free": self.press_times}
-    
+
     def to_box(self):
         """
         Converts the class into a box-vector.
