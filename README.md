@@ -52,8 +52,8 @@ pyenv local 3.9.0
 Clone the repository and run the following.
 
 ```{bash}
-git clone https://anonymous.4open.science/r/ContainerGym
-cd ContainerGym_Prefinal
+git clone https://anonymous.4open.science/r/ContainerGymSubmission
+cd ContainerGym
 ```
 
 Create a virtual environment and run the following commands
