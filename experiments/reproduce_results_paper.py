@@ -5,16 +5,18 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 
-import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-from statsmodels.distributions.empirical_distribution import ECDF
-import torch
-from stable_baselines3 import PPO, DQN
+import numpy as np
 from sb3_contrib import TRPO
+from stable_baselines3 import PPO, DQN
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common import results_plotter
+from statsmodels.distributions.empirical_distribution import ECDF
+import torch
+
 from containergym.env import ContainerEnv
+from ecdf_rewards import produce_ecdf_rewards
 from rule_based_agent import RuleBasedAgent
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -46,7 +48,7 @@ def run_trained_agent(
     overwrite_timestep : int or bool, optional
         If a different timestep is desired in inference, set that timestep here. Default is `False`.
     algorithm : str, optional
-        The RL algorithm used for training the agent. Valid options are: 'ppo', 'trpo', 'dqn', and 'deterministic'.
+        The RL algorithm used for training the agent. Valid options are: 'ppo', 'trpo', 'dqn', and 'rule_based'.
         Default is 'ppo'.
     deterministic_policy : bool, optional
         Whether to sample from a deterministic policy. Default is `True`.
@@ -80,7 +82,7 @@ def run_trained_agent(
         model = TRPO.load(log_dir + "best_model.zip")
     elif algorithm == "dqn":
         model = DQN.load(log_dir + "best_model.zip")
-    elif algorithm == "deterministic":
+    elif algorithm == "rule_based":
         model = RuleBasedAgent(
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
@@ -117,8 +119,8 @@ def run_trained_agent(
     # fontsize = 15
     env_unwrapped = env.unwrapped
 
-    if algorithm == "deterministic":
-        fig.suptitle("Rollout of deterministic controller on test environment")
+    if algorithm == "rule_based":
+        fig.suptitle("Rollout of rule-based controller on test environment")
     else:
         fig.suptitle("Rollout of " + algorithm.upper() + " on test environment")
 
@@ -243,7 +245,7 @@ def run_trained_agent(
         plt.savefig(fig_name + ".%s" % format, dpi="figure", format=format)
         plt.close()
 
-    print("Ratio of rewards < 0:", len([x for x in rewards if x < 0]) / len(rewards))
+    print("Ratio of negative rewards:", len([x for x in rewards if x < 0]) / len(rewards))
 
 
 def average_cumulative_reward(
@@ -691,10 +693,10 @@ def main():
     6. Runs a rule-based agent for specified configurations.
     """
     fig_format = "svg"
-    paths = glob.glob("./logs_best_seeds/**/*.zip", recursive=True)
-    print("Found logs:")
-    print("\n".join(paths))
-    for path in paths:
+    best_paths = glob.glob("./logs_best_seeds/**/*.zip", recursive=True)
+    print("Found logs for best seeds:")
+    print("\n".join(best_paths))
+    for path in best_paths:
         # Extract run and config info from path
         run_name = path.split(os.sep)[-2]
         print("Run name: " + run_name)
@@ -769,7 +771,7 @@ def main():
         "11containers_11presses_5",
     ]
     for config in rule_based_configs:
-        algorithm = "deterministic"
+        algorithm = "rule_based"
         config_file = config + ".json"
         fig_name = "run_rule_based_agent_" + config
         print(
@@ -782,12 +784,44 @@ def main():
             log_dir=None,
             config_file=config_file,
             overwrite_episode_length=600,
-            algorithm="deterministic",
+            algorithm="rule_based",
             fig_name=fig_name,
             format=fig_format,
             save_fig=True,
         )
 
+    median_paths = glob.glob("./logs_median_seeds/**/*.zip", recursive=True)
+    print("Found logs for median seeds:")
+    print("\n".join(median_paths))
+    for path in median_paths:
+        # Extract run and config info from path
+        run_name = path.split(os.sep)[-2]
+        print("Run name: " + run_name)
+        config_name = run_name.split("_seed_")[0].split("_", maxsplit=1)[-1]
+        print("Config name: " + config_name)
+        config_file = config_name + ".json"
+        algorithm = run_name.split("_")[0]
+        log_dir = (
+            os.path.dirname(os.path.abspath(__file__))
+            + "/logs_median_seeds/"
+            + run_name
+            + "/"
+        )
+
+        # Average cumul. rewards over 15 rollouts
+        average_cumulative_reward(
+            log_dir,
+            config_file=config_file,
+            overwrite_episode_length=600,
+            overwrite_timestep=120,
+            algorithm=algorithm,
+            n_rollouts=15,
+            deterministic_policy=True,
+        )
+        print("---------------------------------------")
+
+    print("Producing reward ecdf plots")
+    produce_ecdf_rewards()
 
 if __name__ == "__main__":
     main()

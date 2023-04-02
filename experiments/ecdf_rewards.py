@@ -26,6 +26,7 @@ def episodic_reward(
     algorithm="ppo",
     deterministic_policy=True,
     n_rollouts=15,
+    include_action_zero=False
 ):
     """
     Returns a list of episodic rewards collected over n_rollouts of the agent in log_dir.
@@ -38,17 +39,21 @@ def episodic_reward(
         name of the config file used for the environment, by default '1container_1press.json'
     overwrite_episode_length: int, optional
         if a different episode length is desired in inference, set that length here
+    overwrite_timestep : int, optional
+        if a different timestep length is desired in inference, set that length here
     deterministic_policy: bool, optional
         whether to sample from deterministic policy, by default True
     algorithm: str, optional
         the RL algorithm used, can be 'ppo', 'trpo', 'dqn', or 'rulebased', by default 'ppo'
     n_rollouts: int, optional
-        the number of rollouts to evaluate, by default 15
+        number of rollouts used to collect rewards, by default 15
+    include_action_zero : bool, optional
+        if True, rewards obtained when action 0 (do nothing) is performed are included in the sample, default is False
 
     Returns:
     --------
     rewards: list
-        a list of rewards collected during each rollout
+        list of rewards collected over the rollouts
     """
 
     env = ContainerEnv.from_json(
@@ -75,8 +80,11 @@ def episodic_reward(
                 "../containergym/configs/" + config_file,
             )
         )
-    # Keep track of rewards
+    # Keep track of rewards and ratio of emptying actions
     rewards = []
+    rewards_all = []  # Needed to compute ratio of rollouts that end prematurely
+    ratio_emptying_actions = 0
+    total_actions = 0
 
     for _ in range(n_rollouts):
         obs = env.reset()
@@ -86,12 +94,26 @@ def episodic_reward(
         while True:
             episode_length += 1
             action, _ = model.predict(obs, deterministic=deterministic_policy)
+            total_actions += 1
             obs, reward, done, info = env.step(action)
-            rewards.append(reward)
+
+            rewards_all.append(reward)
+
+            if action:
+                rewards.append(reward)
+                ratio_emptying_actions += 1
+            else:
+                if include_action_zero:
+                    rewards.append(reward)
+
             if done:
                 break
             step += 1
 
+    print("Ratio of {}'s rollouts ending prematurely: {:.4}".format(algorithm, len([r for r in rewards_all if r == -1])
+                                                                    / n_rollouts))
+    print("Ratio of emptying actions for {}: {:.4f}".format(algorithm, ratio_emptying_actions / total_actions))
+    print("------------------------------------------------------------------------------------------")
     return rewards
 
 
@@ -125,18 +147,18 @@ def plot_ecdf_rewards(dict_rewards, fig_name="", format="png"):
         ecdf = ECDF(r)
         plt.plot(ecdf.x, ecdf.y, linewidth=line_width, label=k)
 
-    plt.title("ECDF of reward per timestep")
+    plt.title("ECDF of reward per emptying action")
     plt.grid()
     plt.xlabel("Reward")
     xmin, xmax = -1, 1  # min([min(v) for v in dict_rewards.values()]), max([max(v) for v in dict_rewards.values()])
     plt.xlim(xmin, xmax)
 
-    plt.legend(loc="best")
+    plt.legend(loc=2)
     plt.savefig(fig_name + ".%s" % format, dpi="figure", format=format)
     plt.show()
 
 
-def main():
+def produce_ecdf_rewards():
     """
     Runs the main experiment by computing the episodic rewards for PPO, TRPO, DQN and rule-based controller,
     and then plotting their reward ECDFs.
@@ -156,7 +178,8 @@ def main():
 
     for path in paths:
         # Extract run and config info from path
-        run_name = path.split(os.sep)[-1]
+        run_name = path.split("/")[-1]
+        print(run_name)
         config_name = run_name.split("_seed_")[0].split("_", maxsplit=1)[-1]
         config_file = config_name + ".json"
         algorithm = run_name.split("_")[0]
@@ -166,6 +189,7 @@ def main():
             + run_name
             + "/"
         )
+        print(config_file)
         dict_rewards[algorithm.upper()] = episodic_reward(
             log_dir,
             config_file=config_file,
@@ -174,6 +198,7 @@ def main():
             algorithm=algorithm,
             deterministic_policy=True,
             n_rollouts=15,
+            include_action_zero=False
         )
     # Reward ECDFs
     fig_name = "reward_ecdfs_" + config_name
@@ -185,12 +210,14 @@ def main():
     labels = [r"$n = 5, m = 2$", r"$n = 11, m = 2$", r"$n = 11, m = 11$"]
     for i, config_file in enumerate(["5containers_2presses_2.json", "11containers_2presses_3.json",
                                      "11containers_11presses_5.json"]):
+        print(labels[i])
         dict_rewards[labels[i]] = episodic_reward(log_dir, config_file=config_file,
-                                                  overwrite_episode_length=600,overwrite_timestep=120,
-                                                  algorithm=algorithm, deterministic_policy=True, n_rollouts=15)
+                                                  overwrite_episode_length=600, overwrite_timestep=120,
+                                                  algorithm=algorithm, deterministic_policy=True, n_rollouts=15,
+                                                  include_action_zero=False)
     fig_name = 'reward_ecdfs_rule_based_controller'
     plot_ecdf_rewards(dict_rewards, fig_name=fig_name, format=fig_format)
 
 
 if __name__ == "__main__":
-    main()
+    produce_ecdf_rewards()
